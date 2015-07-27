@@ -1,0 +1,82 @@
+#page-content-wrapper {
+	height: 100%;
+	overflow-y: auto;
+	position: fixed;
+	transition: all 0.5s ease 0s;
+	z-index: 1000;
+}
+.container-fluid{
+	height: 100%;
+}
+/*.row{
+	height: 100%;
+}*/
+#div-map{
+	height: 100%;
+}
+html { overflow:hidden; }
+.noUi-handle.noUi-active {
+	transform: scale3d(1, 1, 1);
+}
+.noUi-vertical .noUi-handle {
+	cursor: ns-resize;
+	margin-left: 0;
+}
+.noUi-marker-vertical.noUi-marker {
+	height: 2px;
+	margin-top: -1px;
+	width: 5px;
+}
+.noUi-marker {
+	background: #ccc none repeat scroll 0 0;
+	position: absolute;
+}
+		
+.noUi-pips-vertical {
+	height: 100%;
+	left: 100%;
+	padding: 0 10px;
+	top: 0;
+}
+.noUi-pips {
+	color: #999;
+	font: 400 12px Arial;
+	position: absolute;
+}
+.noUi-pips, .noUi-pips * {
+	box-sizing: border-box;
+}
+noUi-value-vertical {
+	margin-left: 20px;
+	margin-top: -5px;
+	width: 15px;
+}
+.noUi-value-sub {
+	color: #ccc;
+	font-size: 10px;
+}
+.noUi-value {
+	position: absolute;
+	text-align: center;
+	width: 40px;
+}
+.noUi-value-sub {
+	color: #ccc;
+	font-size: 10px;
+}
+.noUi-marker-vertical.noUi-marker {
+	height: 2px;
+	margin-top: -1px;
+	width: 5px;
+}
+.noUi-marker-vertical.noUi-marker-sub {
+	width: 10px;
+}
+.noUi-marker-vertical.noUi-marker-large {
+	width: 15px;
+}
+.noUi-connect {
+	background: #3fb8af none repeat scroll 0 0;
+	box-shadow: 0 0 3px rgba(51, 51, 51, 0.45) inset;
+	transition: background 450ms ease 0s;
+}
