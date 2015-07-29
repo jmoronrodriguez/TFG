@@ -1,4 +1,6 @@
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
 <head>
 	<meta charset="utf-8">
 	<title>Admin</title>
@@ -24,7 +26,7 @@
 	<link rel="stylesheet" href="http://openlayers.org/en/v3.6.0/css/ol.css" type="text/css">
     <style>
       .map {
-        height: 50%;
+        height: 100%;
         width: 100%;
       }
     </style>
@@ -42,7 +44,7 @@
 			text-decoration: none;
 		}
 		.popover-content {
-		  min-width: 180px;
+		  min-width: 200px;
 		}
 	</style>
 	<script>$('#widget').draggable();</script>

@@ -27,9 +27,9 @@
             <div class="container-fluid">
 				<div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
+                        <h3 class="page-header">
                             CONFIGURACION
-                        </h1>
+                        </h3>
                         <ol class="breadcrumb">
                             <li>
                                 <i class="fa fa-dashboard"></i>  <a href="index.html">Admin</a>
@@ -40,31 +40,12 @@
                         </ol>
                     </div>
                 </div>
-                <div class="row">
-					<div class="col-md-5"><input type='text' class='form-control floating-label' placeholder='Nombre' id='Nombre'> </div>
-					<div class="col-md-5">
-						<input type="file" id="inputFile" multiple="" >
-					</div>
+                
 				
-                </div>
-				<div class="row">
-					<div class="col-md-3"><select class="form-control" id="slt_tipo"><option>--tipo--</option></select> </div>
-					<div class="col-md-3"><select class="form-control" id="slt_configur"><option>--configuracion--</option></select> </div>
-					<div class="col-md-3"><select class="form-control" id="slt_bando"><option>--Bando--</option></select> </div>
-                </div>
+				
+				
 				<div class="row">
 					
-					<div class="col-md-2"><label>X: </label><input type='text' class='form-control floating-label' placeholder='X' id='CoorX'> </div>
-					<div class="col-md-2"><label>Y: </label><input type='text' class='form-control' placeholder='Y' id='CoorY'> </div>
-					<div class="col-md-3"><label>Min. Edad: </label><input type='text' class='form-control floating-label' placeholder='Año Minimo' id='MinEdad'> </div>
-					<div class="col-md-2"><label>Max. Edad: </label><input type='text' class='form-control' placeholder='Año Maximo' id='MaxEdad'> </div>
-                </div>
-				<div class="row">
-					<div class="col-md-10">
-						<div id='slider-range' style="margin-top: 10px;"></div>
-					</div>
-				</div>
-				<div class="row">
 					<div class="col-md-10">
 					 
 						<div id="basicMap" class='map'></div>
@@ -78,6 +59,102 @@
             </div>
         </div>
     </div>
+	<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog modal-lg"role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="myModalLabel">POI Nuevo</h4>
+		  </div>
+		  <div class="modal-body">
+						<?=form_open_multipart('adminPOI/do_upload'); ?>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label" for="inputError inputSuccess">Nombre: </label>
+									<input type='text' class='form-control floating-label' placeholder='Nombre' id='Nombre' name='Nombre'> 
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label" for="inputError">Imagen: </label>
+									<input type="file" name="Imagen" id='Imagen' accept=".png" >
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label" for="inputError">Word File: </label>
+									<input type="file" name="geolocalizacion" id='geolocalizacion' accept=".pgw">
+								</div>
+							</div>
+						
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								<div class="form-group">
+									<label class="control-label" for="inputError">Tipo: </label>
+									<select class="form-control" id="slt_tipo" name="slt_tipo"><option value='-1'>Seleciona..-</option></select> 
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label class="control-label" for="inputError">Configuracion: </label>
+									<select class="form-control" id="slt_configur" name="slt_configur"><option value='-1'>Seleciona..-</option></select> 
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label class="control-label" for="inputError">Bando: </label>
+									<select class="form-control" id="slt_bando" name="slt_bando"><option value='-1'>Seleciona..-</option></select> 
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="control-label" for="inputError">X: </label>
+									<input type='text' class='form-control floating-label' placeholder='X' id='CoorX' name='CoorX' readonly> 
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="control-label" for="inputError">Y: </label>
+									<input type='text' class='form-control' placeholder='Y' id='CoorY' name='CoorY' readonly> 
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="control-label" for="inputError">Min. Edad: </label>
+									<input type='text' class='form-control' placeholder='Año Minimo' id='MinEdad' name='MinEdad' readonly>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="control-label" for="inputError">Max. Edad: </label>
+									<input type='text' class='form-control' placeholder='Año Maximo' id='MaxEdad' name='MaxEdad' readonly> 
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div id='slider-range' style="margin-top: 10px;"></div>
+							</div>
+						</div>
+					</div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		  </div>
+		  <?php form_close() ?>
+		</div>
+	  </div>
+	</div>
 	
 	
 	
@@ -172,10 +249,114 @@
 			'placement': 'top',
 			'animation': false,
 			'html': true,
-			'content': '<p>Coordenadas en ED50, UTM USO 30:</p><code>' + hdms + '</code>'
+			'content': '<p>Coordenadas en ED50, UTM USO 30:</p><code>' + hdms + '</code></BR><button type="button" class="btn btn-primary"  onClick="nuevo()">Nuevo</button> '
 		  });
 		  $(element).popover('show');
 		});
+		//FUNCION PARA VALIDAR EL FORMULARIO *******************************/
+		$( "form" ).submit(function( event ) {
+			//VALIDADMOS LOS SELECT
+			var enviar=true;
+			var mensaje="";
+			//SELECT BANDO
+			if ($('#slt_bando').val()==-1){
+				$('#slt_bando').parent().addClass('has-error');
+				enviar=false;
+			}else{
+				$('#slt_bando').parent().removeClass('has-error');
+				$('#slt_bando').parent().addClass('has-success');
+			}
+			//SELECT CONFIGURACION
+			if ($('#slt_configur').val()==-1){
+				$('#slt_configur').parent().addClass('has-error');
+				enviar=false;
+			}else{
+				$('#slt_configur').parent().removeClass('has-error');
+				$('#slt_configur').parent().addClass('has-success');
+			}
+			//SELECT TIPO POI
+			if ($('#slt_tipo').val()==-1){
+				$('#slt_tipo').parent().addClass('has-error');
+				enviar=false;
+			}else{
+				$('#slt_tipo').parent().removeClass('has-error');
+				$('#slt_tipo').parent().addClass('has-success');
+			}
+			//INPUT NOMBRE POI
+			if ($('#Nombre').val()==""){
+				$('#Nombre').parent().removeClass('has-success');
+				$('#Nombre').parent().addClass('has-error');
+				enviar=false;
+			}else{
+				$('#Nombre').parent().removeClass('has-error');
+				$('#Nombre').parent().addClass('has-success');
+			}
+			//MINIMAD EDAD
+			if ($('#MinEdad').val()==""){
+				$('#MinEdad').parent().addClass('has-error');
+				enviar=false;
+			}else{
+				$('#MinEdad').parent().removeClass('has-error');
+				$('#MinEdad').parent().addClass('has-success');
+			}
+			//MAXIMA EDAD
+			if ($('#MaxEdad').val()==""){
+				$('#MaxEdad').parent().addClass('has-error');
+				enviar=false;
+			}else{
+				$('#MaxEdad').parent().removeClass('has-error');
+				$('#MaxEdad').parent().addClass('has-success');
+			}
+			//IMAGEN
+			if ($('#Imagen').val()==""){
+				$('#Imagen').parent().addClass('has-error');
+				enviar=false;
+			}else{
+				$('#Imagen').parent().removeClass('has-error');
+				$('#Imagen').parent().addClass('has-success');
+			}
+			//ARCHIVO WORD
+			if ($('#geolocalizacion').val()==""){
+				$('#geolocalizacion').parent().addClass('has-error');
+				enviar=false;
+			}else{
+				$('#geolocalizacion').parent().removeClass('has-error');
+				$('#geolocalizacion').parent().addClass('has-success');
+			}
+			if (enviar){
+					return;
+			}
+			event.preventDefault();
+		});
+		//FUNICON NUEVO**********
+		function nuevo(){
+			//RESETEAMOS EL FORMULARIO
+			$('#Nombre').val("");
+			$('#Nombre').parent().removeClass('has-error');
+			$('#Nombre').parent().removeClass('has-success');
+			$('#slt_bando').val(-1);
+			$('#slt_bando').parent().removeClass('has-error');
+			$('#slt_bando').parent().removeClass('has-success');
+			$('#slt_configur').val(-1);
+			$('#slt_configur').parent().removeClass('has-error');
+			$('#slt_configur').parent().removeClass('has-success');
+			$('#slt_tipo').val(-1);
+			$('#slt_tipo').parent().removeClass('has-error');
+			$('#slt_tipo').parent().removeClass('has-success');
+			$('#MinEdad').val("");
+			$('#MinEdad').parent().removeClass('has-error');
+			$('#MinEdad').parent().removeClass('has-success');
+			$('#MaxEdad').val("");
+			$('#MaxEdad').parent().removeClass('has-error');
+			$('#MaxEdad').parent().removeClass('has-success');
+			$('#Imagen').val("");
+			$('#Imagen').parent().removeClass('has-error');
+			$('#Imagen').parent().removeClass('has-success');
+			$('#geolocalizacion').val("");
+			$('#geolocalizacion').parent().removeClass('has-error');
+			$('#geolocalizacion').parent().removeClass('has-success');
+			$('#myModal').modal('toggle');
+		}
 		//Funcion de carga de los Select
 		$( document ).ready(function() {
 			var URL = "<?= site_url(array('adminBandos', 'get_bandos_json')) ?>";

@@ -66,7 +66,7 @@
 	
 	
 	
-	<script> 
+	 <script type="text/javascript">
 	//FUNCION CAMBIAR BOTONES
 	function cambiar(id){
 		$("#edit"+id).toggle();
@@ -145,8 +145,6 @@
 		});
 		$("#nuevo").val("");
 	}
-	</script>
-	<script>
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
