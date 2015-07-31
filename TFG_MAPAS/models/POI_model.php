@@ -68,7 +68,20 @@ class POI_model extends CI_Model
         return FALSE;
 	
 	}
-	function get_tipoPOIs() {
+	function getNextID(){
+		$this->db->select_max('poi_id');
+		$query = $this->db->get('poi');
+		if($query -> num_rows() == 1){
+			$rows = $query->result();
+			if (is_null($rows[0]->poi_id)){
+				return 1;
+			}
+			return $rows[0]->poi_id;
+		}
+		return -1;
+	
+	}
+	function get_POIs() {
         $query = $this->db->get('poi');
         return $query->result();
     }

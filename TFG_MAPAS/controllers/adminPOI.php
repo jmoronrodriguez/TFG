@@ -17,9 +17,52 @@ class AdminPOI extends CI_Controller {
 		$this->load->view('admin/admin_POI');
 		$this->load->view('templates/footer_admin');
 	}
+	public function get_poi_json(){
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('POI_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$template_data['pois']=$this->POI_model->get_POIs();
+		//LISTAMOS LA CONFIGURACIONES
+		echo json_encode($template_data['pois']);
+	
+	}
+	public function get_mapas_json(){
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('POI_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$template_data['pois']=$this->POI_model->get_POIs();
+		$i=0;
+		foreach ($template_data['pois'] as $poi){
+			$prueba[$i]['poi_id']=$poi->poi_id;
+			$prueba[$i]['poi_des']=$poi->poi_des;
+			$prueba[$i]['poi_X']=$poi->poi_X;
+			$prueba[$i]['poi_Y']=$poi->poi_Y;
+			
+			//Obtenemos las coordenadas del archivo pgw (World Info)
+			$fp = fopen("assets/visibilityMaps/worldInfo/wordInfo_".$poi->poi_id.".pgw", "r");
+			$lineas;
+			$j=0;
+			while(!feof($fp)) {
+				$lineas[$j] = fgets($fp);
+				$j++;
+			}
+			fclose($fp);
+			$prueba[$i]['minX']=(float)$lineas[4];
+			$prueba[$i]['minY']=(float)$lineas[5];
+			//Obtenemos el alto y el ancho de la imagen para calcular las otras coordenadas que faltan
+			$nombre_fichero= asset_url()."visibilityMaps/map_".$poi->poi_id.".png";
+			list($ancho, $alto, $tipo, $atributos) = getimagesize("./assets/img/VISIBILIDAD CASTILLO JAEN4.png");
+			$prueba[$i]['maxX']=((float)$lineas[4]+($ancho*50));
+			$prueba[$i]['maxY']=((float)$lineas[5] -($alto*50));
+			$i++;
+		}
+			
+		echo json_encode ($prueba);
+	}
 	
 	public function do_upload(){
 		 // Revisamos si se ha subido algo
+		 
 		if (isset($_POST['Nombre'])){
 			// Cargamos la libreria Upload
 			$this->load->library('upload');
@@ -37,7 +80,7 @@ class AdminPOI extends CI_Controller {
 			//GUARDAMOS EL POI PARA OBTENER EL ID Y ASI GUARDAR LA IMAGEN
 			$this->load->model('POI_model');
 			$this->POI_model->insert_tipoPOI($data);
-			$newPoi=$this->POI_model->get_POIbyData($data);
+			$newPoi=$this->POI_model->getNextID();
 			
 			/*
 			 * Revisamos si el archivo fue subido
@@ -49,7 +92,7 @@ class AdminPOI extends CI_Controller {
 				// Configuración para el Archivo 1 file_name
 				$config['upload_path'] = 'assets/visibilityMaps/';
 				$config['allowed_types'] = 'gif|jpg|png';     
-				$config['file_name'] = 'map_'.$newPoi->id.'.png';     
+				$config['file_name'] = 'map_'.$newPoi.'.png';     
 
 				// Cargamos la configuración del Archivo 1
 				$this->upload->initialize($config);
@@ -73,7 +116,7 @@ class AdminPOI extends CI_Controller {
 				// si configuras como el Archivo 1 no hará nada
 				$config['upload_path'] = 'assets/visibilityMaps/worldInfo/';
 				$config['allowed_types'] = '*';      
-				$config['file_name'] = 'wordInfo_'.$newPoi->id.'.pgw';     				
+				$config['file_name'] = 'wordInfo_'.$newPoi.'.pgw';     				
 				// Cargamos la nueva configuración
 				$this->upload->initialize($config);
 

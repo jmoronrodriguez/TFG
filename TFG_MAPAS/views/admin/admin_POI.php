@@ -209,6 +209,47 @@
 	var wgs84Projection = ol.proj.get("EPSG:4326");
 	var utmProjection = ol.proj.get("EPSG:23030");
 	var proje = ol.proj.get('EPSG:3857');
+	
+	//CREACION DE LOS MARKERT 
+	//CONSULTAMOS MEDIANTE AJAX LA LISTA DE POIS
+	var URL = "<?= site_url(array('adminPOI', 'get_poi_json')) ?>";
+	var iconFeatures=[];
+	var vectorSource = new ol.source.Vector({
+      //create empty vector
+    })
+	$.getJSON( URL)
+	.done(function( data ) {
+		$.each( data, function( i, item ) {
+			var coordinates=[item.poi_X,item.poi_Y];
+			var iconFeature = new ol.Feature({
+			  geometry: new ol.geom.Point(coordinates),
+			  name: item.poi_des,
+			  population: 4000,
+			  rainfall: 500
+			});	
+			iconFeature.set('id',item.poi_id)
+			//CREAMOS EL ARRAY DE iconFeatures			
+			vectorSource.addFeature(iconFeature);
+		});
+	});
+	
+	
+	
+	var iconStyle = new ol.style.Style({
+	  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+		anchor: [1, 1],
+		anchorXUnits: 'fraction',
+		anchorYUnits: 'fraction',
+		opacity: 1,
+		src: '<?=asset_url();?>img/castle.png'//'http://ol3js.org/en/master/examples/data/icon.png'
+	  }))
+	});
+	//CREAMOS LA CAPA DE MARKETS
+	var marketsLayer = new ol.layer.Vector({
+	  source: vectorSource,
+	  style: iconStyle
+	});
+	
 	//CAPA DE OPEN STREEP MAP	
 	var layer2=new ol.layer.Tile({
       source: new ol.source.OSM()
@@ -216,7 +257,8 @@
 	//CREACION DEL MAPA
       var map = new ol.Map({
  		  layers: [
-			layer2
+			layer2, 
+			marketsLayer
 		  ],
 		  target: 'basicMap',
 		  controls: ol.control.defaults({
@@ -236,22 +278,41 @@
 		map.addOverlay(popup);
 		map.on('click', function(evt) {
 		  var element = popup.getElement();
-		  var coordinate = evt.coordinate;
-		  $('#CoorX').val(coordinate[0]);
-		  $('#CoorY').val(coordinate[1]);
-		  var hdms = ol.proj.transform(
-			  coordinate, 'EPSG:3857', 'EPSG:23030');
+		  
+		  var feature = map.forEachFeatureAtPixel(evt.pixel,
+			  function(feature, layer) {
+				return feature;
+			  });
+		  if (feature) {
+			$(element).popover('destroy');
+			var geometry = feature.getGeometry();
+			var coord = geometry.getCoordinates();
+			var id=feature.get('id');
+			popup.setPosition(coord);
+			$(element).popover({
+			  'title':feature.name,	
+			  'placement': 'top',
+			  'html': true,
+			  'content': '<button type="button" class="btn btn-warning"  onClick="editar('+id+')"><span class="glyphicon glyphicon-edit"></span> Editar</button> <button type="button" class="btn btn-danger"  onClick="borrar('+id+')"><span class="glyphicon glyphicon-trash"></span> Borrar</button>'
+			});
+			$(element).popover('show');
+		  } else {
+			  var coordinate = evt.coordinate;
+			  $('#CoorX').val(coordinate[0]);
+			  $('#CoorY').val(coordinate[1]);
+			  var hdms = ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:23030');
 
-		  $(element).popover('destroy');
-		  popup.setPosition(coordinate);
-		  // the keys are quoted to prevent renaming in ADVANCED mode.
-		  $(element).popover({
-			'placement': 'top',
-			'animation': false,
-			'html': true,
-			'content': '<p>Coordenadas en ED50, UTM USO 30:</p><code>' + hdms + '</code></BR><button type="button" class="btn btn-primary"  onClick="nuevo()">Nuevo</button> '
-		  });
-		  $(element).popover('show');
+			  $(element).popover('destroy');
+			  popup.setPosition(coordinate);
+			  // the keys are quoted to prevent renaming in ADVANCED mode.
+			  $(element).popover({
+				'placement': 'top',
+				'animation': false,
+				'html': true,
+				'content': '<p>Coordenadas en ED50, UTM USO 30:</p><code>' + hdms + '</code></BR><button type="button" class="btn btn-primary"  onClick="nuevo()">Nuevo</button> '
+			  });
+			  $(element).popover('show');
+		  }
 		});
 		//FUNCION PARA VALIDAR EL FORMULARIO *******************************/
 		$( "form" ).submit(function( event ) {
@@ -356,6 +417,16 @@
 			$('#geolocalizacion').parent().removeClass('has-error');
 			$('#geolocalizacion').parent().removeClass('has-success');
 			$('#myModal').modal('toggle');
+		}
+		//FUNCION EDITAR+++++++
+		function editar(id ){
+			var URL = "<?= site_url(array('adminPOI', 'get_poi_json')) ?>";
+			$.getJSON( URL)
+			.done(function( data ) {
+				$.each( data, function( i, item ) {
+					
+				});
+			});
 		}
 		//Funcion de carga de los Select
 		$( document ).ready(function() {
