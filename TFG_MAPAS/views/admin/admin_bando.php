@@ -33,7 +33,7 @@
 								<tr>
 								  <th><b>Id</b></th>
 								  <th><b>Descripcion</b></th>
-								  
+								  <th class='colorDiv'><b>Color</b></th>
 								  <th><b>    </b></th>
 								  
 								</tr>
@@ -45,7 +45,8 @@
 									echo("<td>".$item->ban_id."</td>");
 									echo("<td><div id='noEdit".$item->ban_id."' >".$item->ban_des."</div>");
 									echo("<div id='edit".$item->ban_id."' style='display: none'><input type='text' class='form-control' placeholder='".$item->ban_des."'  id='textEdit_".$item->ban_id."'></div></td>");
-									echo("<td ><div id='botonesNoEdit".$item->ban_id."'><button type='button' class='btn btn-info' id='boton".$item->ban_id."' onClick='cambiar(".$item->ban_id.")' > <span class='glyphicon glyphicon-wrench'></span> Normal</button></div>");
+									echo("<td class='colorDiv'><button type='button' class='btn' id='noEdit2".$item->ban_id."'  style='background:".$item->ban_color."' >&nbsp;&nbsp;&nbsp;&nbsp;</button><div id='edit2".$item->ban_id."' style='display: none'><input type='hidden'  id='hiddenColor".$item->ban_id."'  value='".$item->ban_color."'/><button type='button' class='btn' style='background:".$item->ban_color."' id='color".$item->ban_id."'>&nbsp;&nbsp;&nbsp;&nbsp;</button></div></td>");
+									echo("<td ><div id='botonesNoEdit".$item->ban_id."'><button type='button' class='btn btn-info' id='boton".$item->ban_id."' onClick='cambiar(".$item->ban_id.")' > <span class='glyphicon glyphicon-wrench'></span> Normal</button> </div>");
 									echo("<div id='botonesEdit".$item->ban_id."' style='display: none'>");
 									echo("<button type='button' class='btn btn-warning' onClick='edit(".$item->ban_id.")'><span class='glyphicon glyphicon-edit'></span> Editar</button>&nbsp;");
 									echo("<button type='button' class='btn btn-danger'  onClick='borrar(".$item->ban_id.")'><span class='glyphicon glyphicon-trash'></span> Borrar</button>&nbsp;");
@@ -64,27 +65,73 @@
         </div>
     </div>
 	
+	<div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="titleConfirm">Borrar POI</h4>
+				</div>
+				<div class="modal-body" id='bodyConfirm'>
+					¿Esta seguro de Borrar este POI?
+				</div>
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-danger" id="delete">Si</button>
+					<button type="button" data-dismiss="modal" class="btn btn-primary">No</button>
+					<input type='hidden' id='data_id' value='-1'/>
+				</div>
+			</div>
+		</div>
+	</div>
 	
-	
-	<script> 
+ <script type="text/javascript">
+	//COLOR PICKER
+	$(document).ready(function(){
+		
+		<?php 
+		foreach ($bandos as $item){
+			echo "$('#color".$item->ban_id."').colorpicker({";
+			  echo "color: $('#color".$item->ban_id."').css('background')";
+			echo "}).on('changeColor', function(ev) {";
+			  echo "$('#color".$item->ban_id."').css('background', ev.color.toHex());";
+			  echo "$('#hiddenColor".$item->ban_id."').val(ev.color.toHex());";
+			echo "});";
+			}
+		?>
+	});
 	//FUNCION CAMBIAR BOTONES
 	function cambiar(id){
 		$("#edit"+id).toggle();
+		$("#edit2"+id).toggle();
 		$("#noEdit"+id).toggle();
+		$("#noEdit2"+id).toggle();
 		$("#botonesNoEdit"+id).toggle();
 		$("#botonesEdit"+id).toggle();
 	}
 	//EDITAR CONFIGURACION
-	function edit(id) {
+	function edit(id){
+		$('#data_id').val(id);//Guardamos el id
+		$('#titleConfirm').html('Editar Bando');
+		$('#bodyConfirm').html('¿Esta seguro de editar este Bando?');
+		var color=$('#noEdit2').css('background-color');
+		console.log("La respuesta es:", color);
+		$('#confirm').modal('toggle');
+	}
+	$('#delete').click(function(){
+		var id=$('#data_id').val();
+		editConfirm(id);
+	});
+	function editConfirm(id) {
+			$('#confirm').modal('toggle');
 			edit=$("#textEdit_"+id).val();
-			url__ = '<?= site_url(array('adminBandos', 'edit')) ?>/'+id+'/'+edit;
-            $.ajax({
-				url: url__,
+			color=$('#hiddenColor'+id).val();
+			url__ = '<?= site_url(array('adminBandos', 'edit')) ?>';
+			$.post(url__, {id: id, des: edit, color: color}, function(respuesta) {
+				console.log("La respuesta es:", respuesta);
 			});
-			//Restauramos la fila
+            //Restauramos la fila
 			$("#noEdit"+id).html(edit);
 			cambiar(id);
-       //});
     }
 	//BORRAR CONFIGURACION
 	//MEDIANTE AJAX BORRAMOS UN REGISTRO DE LA CONFIGURACION
@@ -133,6 +180,7 @@
 				nuevaFila+="<td>"+item.ban_id+"</td>";
 				nuevaFila+="<td><div id='noEdit"+item.ban_id+"' >"+item.ban_des+"</div>";
 				nuevaFila+="<div id='edit"+item.ban_id+"' style='display: none'><input type='text' class='form-control' placeholder='"+item.ban_des+"'  id='textEdit_"+item.ban_id+"'></div></td>";
+				nuevaFila+="<td class='colorDiv'><button   type='button' class='btn' id='noEdit2"+item.ban_id+"'  style='background:"+item.ban_color+"' >&nbsp;&nbsp;&nbsp;&nbsp;</button><div id='edit2"+item.ban_id+"' style='display: none'><input type='hidden'  id='hiddenColor"+item.ban_id+"'  value='"+item.ban_color+"'/><button type='button' class='btn' style='background:"+item.ban_color+"' id='color"+item.ban_id+"'>&nbsp;&nbsp;&nbsp;&nbsp;</button></div></td>";
 				nuevaFila+="<td ><div id='botonesNoEdit"+item.ban_id+"'><button type='button' class='btn btn-info' id='boton"+item.ban_id+"' onClick='cambiar("+item.ban_id+")' > <span class='glyphicon glyphicon-wrench'></span> Normal</button></div>";
 				nuevaFila+="<div id='botonesEdit"+item.ban_id+"' style='display: none'>";
 				nuevaFila+="<button type='button' class='btn btn-warning' onClick='edit("+item.ban_id+")'><span class='glyphicon glyphicon-edit'></span> Editar</button>&nbsp;";
@@ -145,8 +193,6 @@
 		});
 		$("#nuevo").val("");
 	}
-	</script>
-	<script>
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");

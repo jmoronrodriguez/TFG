@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <html>
 <head>
 	<meta charset="utf-8">
@@ -13,7 +12,7 @@
 	<?=css('ripples.min.css')?>
 	<?=css('estilos.css')?>
 	<?=css('nouislider.min.css')?>
-	
+	<?=css('bootstrap-colorpicker.css')?>
 	
 	<?=js('jquery-2.1.3.min.js')?>
 	
@@ -23,6 +22,7 @@
 	<!--material desing-->
 	<?=js('ripples.min.js')?>
 	<?=js('material.min.js')?>
+	<?=js('bootstrap-colorpicker.js')?>
 	<link rel="stylesheet" href="http://openlayers.org/en/v3.6.0/css/ol.css" type="text/css">
     <style>
       .map {
@@ -45,6 +45,10 @@
 		}
 		.popover-content {
 		  min-width: 200px;
+		}
+		.colorDiv{
+			height: 100%;
+			width: 100px;
 		}
 	</style>
 	<script>$('#widget').draggable();</script>
@@ -78,14 +82,17 @@
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
 			 <ul class="sidebar-nav">
-                <li class='active'>
-                    <a href="<?= site_url(array('adminConfiguracion', 'get_configurations')) ?>">Configuraciones</a>
-                </li>
+				<li>
+                    <a href="<?= site_url(array('adminPOI', 'nuevo')) ?>">POI's</a>
+                </li>                
                 <li>
                     <a href="<?= site_url(array('adminBandos', 'get_bandos')) ?>">Bandos</a>
                 </li>
 				<li>
                     <a href="<?= site_url(array('adminTipoPOI', 'get_tipoPOIs')) ?>">Tipos POI's</a>
+                </li>
+				<li>
+                    <a href="<?= site_url(array('adminConfiguracion', 'get_configurations')) ?>">Configuraciones</a>
                 </li>
                 
             </ul>

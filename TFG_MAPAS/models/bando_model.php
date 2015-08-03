@@ -18,8 +18,9 @@ class bando_model extends CI_Model
    		if($query -> num_rows() == 1)
    		{
 			$rows = $query->result();
-			$this->id = $rows[0]->conf_id;
-			$this->description = $rows[0]->conf_des;
+			$this->id = $rows[0]->ban_id;
+			$this->description = $rows[0]->ban_des;
+			$this->color = $rows[0]->ban_color;
 			return $this;
    		}
 

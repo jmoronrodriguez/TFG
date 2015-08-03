@@ -46,7 +46,7 @@
     </div>
 	
 	
-	<script>
+	 <script type="text/javascript">
 	
 	/***DEFINIMOS LA PROYECCION ED50 USO 30N*****/
 	proj4.defs("EPSG:23030", "+proj=utm +zone=30 +ellps=intl"+
@@ -156,12 +156,21 @@
 			}
 		}
 	});
-	
+	// change mouse cursor when over marker
+	map.on('pointermove', function(e) {
+	  if (e.dragging) {
+		$(element).popover('destroy');
+		return;
+	  }
+	  var pixel = map.getEventPixel(e.originalEvent);
+	  var hit = map.hasFeatureAtPixel(pixel);
+	  map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+	});
 	
 	//**SLIDER**////
 	var slider = document.getElementById('slider-range');
 	noUiSlider.create(slider, {
-		start: [ 0, 100 ], // Handle start position
+		start: [ 0, 90 ], // Handle start position
 		step: 5,
 		margin: 20, // Handles must be more than '20' apart
 		connect: true, // Display a colored bar between the handles

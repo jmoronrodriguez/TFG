@@ -20,6 +20,9 @@
   #slider .slider {
     margin: 15px;
   }
+  .popover-title {
+	color: #000;
+  }
 </style>
         
         <!-- /#CONTENDIO-->
@@ -28,7 +31,7 @@
 				<div class="row">
                     <div class="col-lg-12">
                         <h3 class="page-header">
-                            CONFIGURACION
+                            POI's
                         </h3>
                         <ol class="breadcrumb">
                             <li>
@@ -134,6 +137,7 @@
 								<div class="form-group">
 									<label class="control-label" for="inputError">Max. Edad: </label>
 									<input type='text' class='form-control' placeholder='Año Maximo' id='MaxEdad' name='MaxEdad' readonly> 
+									<input type='hidden' name='id_poi'  id='id_poi' value='-1'> 
 								</div>
 							</div>
 						</div>
@@ -158,6 +162,23 @@
 	
 	
 	
+	<div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Borrar POI</h4>
+				</div>
+				<div class="modal-body">
+					¿Esta seguro de Borrar este POI?
+				</div>
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-danger" id="delete">Si</button>
+					<button type="button" data-dismiss="modal" class="btn btn-primary">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	 <script type="text/javascript">
 	//SLIDER 
 	var slider = document.getElementById('slider-range');
@@ -227,7 +248,8 @@
 			  population: 4000,
 			  rainfall: 500
 			});	
-			iconFeature.set('id',item.poi_id)
+			iconFeature.set('id',item.poi_id);
+			iconFeature.setId(item.poi_id);
 			//CREAMOS EL ARRAY DE iconFeatures			
 			vectorSource.addFeature(iconFeature);
 		});
@@ -241,6 +263,7 @@
 		anchorXUnits: 'fraction',
 		anchorYUnits: 'fraction',
 		opacity: 1,
+		
 		src: '<?=asset_url();?>img/castle.png'//'http://ol3js.org/en/master/examples/data/icon.png'
 	  }))
 	});
@@ -295,7 +318,11 @@
 			  'html': true,
 			  'content': '<button type="button" class="btn btn-warning"  onClick="editar('+id+')"><span class="glyphicon glyphicon-edit"></span> Editar</button> <button type="button" class="btn btn-danger"  onClick="borrar('+id+')"><span class="glyphicon glyphicon-trash"></span> Borrar</button>'
 			});
+			$('#id_poi').val(id);
+			$( "#popup" ).attr( "title", feature.name );
+			
 			$(element).popover('show');
+			$('.popover-title').html(feature.q.name);
 		  } else {
 			  var coordinate = evt.coordinate;
 			  $('#CoorX').val(coordinate[0]);
@@ -309,10 +336,26 @@
 				'placement': 'top',
 				'animation': false,
 				'html': true,
-				'content': '<p>Coordenadas en ED50, UTM USO 30:</p><code>' + hdms + '</code></BR><button type="button" class="btn btn-primary"  onClick="nuevo()">Nuevo</button> '
+				'content': '<p>Coordenadas en ED50, UTM USO 30:</p><code>X:' + hdms[0] + '</code></BR><code>Y:' + hdms[1] + '</code></BR><button type="button" class="btn btn-primary"  onClick="nuevo()">Nuevo</button> '
 			  });
+			  $( "#popup" ).attr( "title", "coordenadas" );
+			  
+			  $('#id_poi').val(-1);
 			  $(element).popover('show');
+			  $('.popover-title').html("coordenadas");
 		  }
+		});
+		
+		// change mouse cursor when over marker
+		map.on('pointermove', function(e) {
+			var element = popup.getElement();
+		  if (e.dragging) {
+			$(element).popover('destroy');
+			return;
+		  }
+		  var pixel = map.getEventPixel(e.originalEvent);
+		  var hit = map.hasFeatureAtPixel(pixel);
+		  map.getTargetElement().style.cursor = hit ? 'pointer' : '';
 		});
 		//FUNCION PARA VALIDAR EL FORMULARIO *******************************/
 		$( "form" ).submit(function( event ) {
@@ -369,20 +412,28 @@
 				$('#MaxEdad').parent().addClass('has-success');
 			}
 			//IMAGEN
-			if ($('#Imagen').val()==""){
-				$('#Imagen').parent().addClass('has-error');
-				enviar=false;
-			}else{
-				$('#Imagen').parent().removeClass('has-error');
-				$('#Imagen').parent().addClass('has-success');
+			if ($('#id_poi').val()==-1){
+				if ($('#Imagen').val()==""){
+					$('#Imagen').parent().addClass('has-error');
+					enviar=false;
+				}else{
+					$('#Imagen').parent().removeClass('has-error');
+					$('#Imagen').parent().addClass('has-success');
+				}
+				//ARCHIVO WORD
+				if ($('#geolocalizacion').val()==""){
+					$('#geolocalizacion').parent().addClass('has-error');
+					enviar=false;
+				}else{
+					$('#geolocalizacion').parent().removeClass('has-error');
+					$('#geolocalizacion').parent().addClass('has-success');
+				}
 			}
-			//ARCHIVO WORD
-			if ($('#geolocalizacion').val()==""){
-				$('#geolocalizacion').parent().addClass('has-error');
-				enviar=false;
+			//CAMBIAMOS LA URL SEGUN SEA PARA EDITAR O PARA CREAR
+			if ($('#id_poi').val()!=-1){
+				 $('form').attr('action', "<?= site_url(array('adminPOI', 'edit')) ?>");
 			}else{
-				$('#geolocalizacion').parent().removeClass('has-error');
-				$('#geolocalizacion').parent().addClass('has-success');
+				$('form').attr('action', "<?= site_url(array('adminPOI', 'do_upload')) ?>");
 			}
 			if (enviar){
 					return;
@@ -416,18 +467,50 @@
 			$('#geolocalizacion').val("");
 			$('#geolocalizacion').parent().removeClass('has-error');
 			$('#geolocalizacion').parent().removeClass('has-success');
+			$('#id_poi').val(-1);
 			$('#myModal').modal('toggle');
+			$('.modal-title').html('POI Nuevo');
 		}
 		//FUNCION EDITAR+++++++
 		function editar(id ){
-			var URL = "<?= site_url(array('adminPOI', 'get_poi_json')) ?>";
+			var URL = "<?= site_url(array('adminPOI', 'get_poiById_json')) ?>/"+id;
 			$.getJSON( URL)
 			.done(function( data ) {
-				$.each( data, function( i, item ) {
-					
-				});
+				var slider = document.getElementById('slider-range');
+				slider.noUiSlider.set([data.MinEdad, data.MaxEdad]);
+				$('#Nombre').val(data.poi_des);
+				$('#slt_bando').val(data.id_bando);
+				$('#slt_configur').val(data.id_conf);
+				$('#slt_tipo').val(data.id_tipo);
+				$('#MaxEdad').val(data.MaxEdad);
+				$('#MinEdad').val(data.MinEdad);
+				$('#myModal').modal('toggle');
+				$('.modal-title').html('Editar POI');
+				 $('#CoorX').val(data.posX);
+				 $('#id_poi').val(id);
+			  $('#CoorY').val(data.posY);
 			});
 		}
+		
+		//FUNCION borrar+++++++
+		
+		function borrar(id){
+			var element = popup.getElement();
+			$(element).popover('destroy');
+			$('#confirm').modal('toggle');
+			/**/
+		}
+		$('#delete').click(function(){
+			var id=$('#id_poi').val();
+			var URL = "<?= site_url(array('adminPOI', 'delete')) ?>/"+id;
+			//$.getJSON( URL)
+			//.done(function( data ) {
+				/*var feature=vectorSource.getFeatureById(id);
+				vectorSource.removeFeature(feature);*/
+			//});*/
+			var feature=vectorSource.getFeatureById(id);
+			vectorSource.removeFeature(feature);
+		});
 		//Funcion de carga de los Select
 		$( document ).ready(function() {
 			var URL = "<?= site_url(array('adminBandos', 'get_bandos_json')) ?>";

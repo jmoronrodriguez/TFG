@@ -2,6 +2,7 @@
 class POI_model extends CI_Model
 {
 	var $id;
+	var $poi_des;
 	var $posX;
 	var $posY;
 	var $img;
@@ -27,6 +28,7 @@ class POI_model extends CI_Model
    		{
 			$rows = $query->result();
 			$this->id = $rows[0]->poi_id;
+			$this->poi_des = $rows[0]->poi_des;
 			$this->posX = $rows[0]->poi_X;
 			$this->posY = $rows[0]->poi_Y;
 			$this->img = $rows[0]->poi_img;
@@ -40,6 +42,13 @@ class POI_model extends CI_Model
    		}
 
         return FALSE;
+	}
+	function get_POIbyBando($id_bando){
+		$this->db->select('*');
+		$this->db->from('poi');
+		$this->db->where('bando_id', $id_bando);
+		$query = $this->db-> get();
+		return $query->result();
 	}
 	function get_POIbyData($data){
 		//`poi_id`, `poi_X`, `poi_Y`, `poi_img`, `poi_ini`, `poi_fin`, `tipo_id`, `bando_id`, `conf_id` poi_des

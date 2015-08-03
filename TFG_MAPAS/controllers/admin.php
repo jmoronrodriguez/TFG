@@ -20,7 +20,9 @@ class Admin extends CI_Controller {
 	public function index()
 	{
 		$this->load->helper('url');
-		$this->load->view('welcome_message');
+		$this->load->view('templates/header_admin');
+		$this->load->view('admin/admin_index');
+		$this->load->view('templates/footer_admin');
 	}
 	public function administracion()
 	{
