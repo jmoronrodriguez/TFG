@@ -50,8 +50,22 @@ class POI_model extends CI_Model
 		$query = $this->db-> get();
 		return $query->result();
 	}
+	function get_POIbyTipo($id_tipo){
+		$this->db->select('*');
+		$this->db->from('poi');
+		$this->db->where('tipo_id', $id_tipo);
+		$query = $this->db-> get();
+		return $query->result();
+	}
+	function get_POIbyConfiguracion($id_conf){
+		$this->db->select('*');
+		$this->db->from('poi');
+		$this->db->where('conf_id', $id_conf);
+		$query = $this->db-> get();
+		return $query->result();
+	}
 	function get_POIbyData($data){
-		//`poi_id`, `poi_X`, `poi_Y`, `poi_img`, `poi_ini`, `poi_fin`, `tipo_id`, `bando_id`, `conf_id` poi_des
+		//`poi_id`, `poi_X`, `poi_Y`, `poi_img`, `poi_ini`, `poi_fin`, `id_tipo`, `bando_id`, `conf_id` poi_des
 		$this->db->select('*');
 		$this->db->from('poi');
 		$this->db->where('poi_X', $data['poi_X']);

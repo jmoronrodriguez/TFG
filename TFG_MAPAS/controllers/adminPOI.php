@@ -63,7 +63,7 @@ class AdminPOI extends CI_Controller {
 		$this->load->model('POI_model');
 		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
 		$poi=$this->POI_model->get_POIbyID($id);
-		//LISTAMOS LA CONFIGURACIONES
+		//LISTAMOS LA CONFIGURACIONES get_poiByTipo_json
 		echo json_encode($poi);
 	}
 	public function get_poiByBando_json($id){
@@ -71,6 +71,24 @@ class AdminPOI extends CI_Controller {
 		$this->load->model('POI_model');
 		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
 		$poi['POIs']=$this->POI_model->get_POIbyBando($id);
+		$poi['tam']=count($poi['POIs']);
+		//LISTAMOS LA CONFIGURACIONES
+		echo json_encode($poi);
+	}
+	public function get_poiByTipo_json($id){
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('POI_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$poi['POIs']=$this->POI_model->get_POIbyTipo($id);
+		$poi['tam']=count($poi['POIs']);
+		//LISTAMOS LA CONFIGURACIONES
+		echo json_encode($poi);
+	}
+	public function get_poiByConfiguracion_json($id){
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('POI_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$poi['POIs']=$this->POI_model->get_POIbyConfiguracion($id);
 		$poi['tam']=count($poi['POIs']);
 		//LISTAMOS LA CONFIGURACIONES
 		echo json_encode($poi);

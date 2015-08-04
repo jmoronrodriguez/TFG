@@ -61,7 +61,25 @@
             </div>
         </div>
     </div>
-	
+	<div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="titleConfirm">Borrar POI</h4>
+				</div>
+				<div class="modal-body" id='bodyConfirm'>
+					¿Esta seguro de Borrar este POI?
+				</div>
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-danger" id="delete">Si</button>
+					<button type="button" data-dismiss="modal" class="btn btn-primary">No</button>
+					<input type='hidden' id='data_id' value='-1'/>
+					<input type='hidden' id='borrar_editar' value='-1'/>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 	
 	<script> 
@@ -72,8 +90,33 @@
 		$("#botonesNoEdit"+id).toggle();
 		$("#botonesEdit"+id).toggle();
 	}
+	$('#delete').click(function(){
+		var id=$('#data_id').val();
+		var borrarEditar=$('#borrar_editar').val();
+		if (borrarEditar==1)
+			editConfirm(id);
+		else
+			borrarConfirm(id);
+	});
 	//EDITAR CONFIGURACION
-	function edit(id) {
+	function edit(id){
+		$('#data_id').val(id);//Guardamos el id
+		$('#borrar_editar').val(1);//Asignamos el 1 para editar
+		$('#titleConfirm').html('Editar Tipo POI');
+		var textoHtml="¿Esta seguro de editar este Tipo POI?<br>";
+		$('#delete').prop('disabled', false);
+		if ($("#textEdit_"+id).val()==''){
+			textoHtml+="<div class='alert alert-dismissable alert-danger'><h4>Error!</h4>";
+			textoHtml+="<p>El cambo descripcion no puede estar vacio.</p></div>";
+			
+			$('#delete').prop('disabled', true);
+			
+		}	
+		$('#bodyConfirm').html(textoHtml);
+		$('#confirm').modal('toggle');
+	}
+	
+	function editConfirm(id) {
 			edit=$("#textEdit_"+id).val();
 			url__ = '<?= site_url(array('adminTipoPOI', 'edit')) ?>/'+id+'/'+edit;
             $.ajax({
@@ -82,11 +125,37 @@
 			//Restauramos la fila
 			$("#noEdit"+id).html(edit);
 			cambiar(id);
-       //});
     }
+	function borrar (id){
+		$('#data_id').val(id);//Guardamos el id
+		$('#borrar_editar').val(2);//Asignamos el 1 para editar
+		var URL = "<?= site_url(array('adminPOI', 'get_poiByTipo_json')) ?>/"+id;
+		var tam=0;
+		$.ajax({
+			  type: "GET",
+			  url: URL,
+			  async: false,
+			  dataType: "json",
+			  success: function(data) {
+				 tam=data.tam;
+			  }
+		  });
+		var textoHtml="¿Esta seguro de borrar este Tipo?<br>";
+		$('#delete').prop('disabled', false);
+		if (tam>0){
+			textoHtml="<div class='alert alert-dismissable alert-danger'><h4>Error!</h4>";
+			textoHtml+="<p>No se puede borrar, tiene POI's asociados.</p></div>";
+			
+			$('#delete').prop('disabled', true);
+			
+		}	
+		$('#bodyConfirm').html(textoHtml);
+		$('#confirm').modal('toggle');
+	}
+	
 	//BORRAR CONFIGURACION
 	//MEDIANTE AJAX BORRAMOS UN REGISTRO DE LA CONFIGURACION
-	function borrar(id){
+	function borrarConfirm(id){
 		$('#fila_'+id).slideUp('slow', function() {
             url__ = '<?= site_url(array('adminTipoPOI', 'delete')) ?>/'+id;
 			$.ajax({
