@@ -65,8 +65,15 @@ class AdminPOI extends CI_Controller {
 		$poi=$this->POI_model->get_POIbyID($id);
 		//LISTAMOS LA CONFIGURACIONES
 		echo json_encode($poi);
-	
-	
+	}
+	public function get_poiByBando_json($id){
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('POI_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$poi['POIs']=$this->POI_model->get_POIbyBando($id);
+		$poi['tam']=count($poi['POIs']);
+		//LISTAMOS LA CONFIGURACIONES
+		echo json_encode($poi);
 	}
 	public function do_upload(){
 		 // Revisamos si se ha subido algo
@@ -84,6 +91,7 @@ class AdminPOI extends CI_Controller {
 			$data['poi_fin']=$_POST['MaxEdad'];
 			$data['tipo_id']=$_POST['slt_tipo'];
 			$data['bando_id']=$_POST['slt_bando'];
+			$bando_id=$data['bando_id'];
 			$data['conf_id']=$_POST['slt_configur'];
 			//GUARDAMOS EL POI PARA OBTENER EL ID Y ASI GUARDAR LA IMAGEN
 			$this->load->model('POI_model');
@@ -137,9 +145,42 @@ class AdminPOI extends CI_Controller {
 				}
 
 			}
-		}else{
-			echo $_POST['Nombre'];
-		}
+			//Obtenemos el color del bando
+			//CARGAMOS EL MODELO DE CONFIGURACION
+			$this->load->model('bando_model');
+			//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+			$data=$this->bando_model->get_bando($bando_id);
+			$hex=$data->color;
+			//cambiamos de color la imagen
+			//Creamos el objeto imagen, como son png uilizamos esta funcion
+			$im = imagecreatefrompng("./assets/visibilityMaps/map_".$newPoi.".png"); 			
+			//Se ponen estas dos lineas para conservar las transparecinas de la imagen.
+			imagealphablending($im, true);
+			imagesavealpha($im, true);
+			//Normalmente el primer pixel es de color transparente
+			$colorBlanco=imagecolorat($im, 0,0);
+			$ancho=imagesx($im); //devuelve el ancho de la imagen
+			$alto=imagesy($im); //devuelve el alto de la imagen
+		
+			$hex = str_replace("#", "", $hex);
+			$r = hexdec(substr($hex,0,2));
+			$g = hexdec(substr($hex,2,2));
+			$b = hexdec(substr($hex,4,2));
+			 $rgb = array($r, $g, $b);//pasamos de HEX a RGB
+			//Obtenomos el color del pixel para cambiar
+			$colorPixel = imagecolorallocate($im,$rgb[0],$rgb[1],$rgb[2]);
+			for ($i=0; $i<$ancho; $i++){
+				for ($j=0; $j<$alto; $j++){
+					if (imagecolorat($im, $i,$j)!=$colorBlanco){//Si es distinto el pixel cambiamos el color
+						imagesetpixel ( $im ,$i , $j , $colorPixel );
+					}
+				}
+			}
+			//header('Content-Type: image/png');
+			imagepng($im, "./assets/visibilityMaps/map_".$newPoi.".png");
+	}else{
+		echo $_POST['Nombre'];
+	}
 		$this->load->view('templates/header_admin');
 		$this->load->view('admin/admin_POI');
 		$this->load->view('templates/footer_admin');
@@ -155,14 +196,17 @@ class AdminPOI extends CI_Controller {
 			$data['poi_fin']=$_POST['MaxEdad'];
 			$data['tipo_id']=$_POST['slt_tipo'];
 			$data['bando_id']=$_POST['slt_bando'];
+			$bando_id=$data['bando_id'];
 			$data['conf_id']=$_POST['slt_configur'];
 			$data['poi_id']=$_POST['id_poi'];
 			//GUARDAMOS EL POI PARA OBTENER EL ID Y ASI GUARDAR LA IMAGEN
 			$this->load->model('POI_model');
+			$ant=$this->POI_model->get_POIbyID($data['poi_id']);
 			$this->POI_model->edit_tipoPOI($data);
 			//si se ha cambiado las imagenes borramos las que tenemos y copiamos las nuevas.
 			// Cargamos la libreria Upload
 			$this->load->library('upload');
+			$cambiado=false;
 			if (!empty($_FILES['Imagen']['name'])){
 				$file = "assets/visibilityMaps/map_".$_POST['id_poi'].".png";
 				$do = unlink($file);
@@ -188,12 +232,47 @@ class AdminPOI extends CI_Controller {
 				{
 					echo $this->upload->display_errors();
 				}
+				
+				//Obtenemos el color del bando
+				//CARGAMOS EL MODELO DE CONFIGURACION
+				$this->load->model('bando_model');
+				//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+				$data=$this->bando_model->get_bando($bando_id);
+				$hex=$data->color;
+				//cambiamos de color la imagen
+				//Creamos el objeto imagen, como son png uilizamos esta funcion
+				$im = imagecreatefrompng("./assets/visibilityMaps/map_".$_POST['id_poi'].".png"); 			
+				//Se ponen estas dos lineas para conservar las transparecinas de la imagen.
+				imagealphablending($im, true);
+				imagesavealpha($im, true);
+				//Normalmente el primer pixel es de color transparente
+				$colorBlanco=imagecolorat($im, 0,0);
+				$ancho=imagesx($im); //devuelve el ancho de la imagen
+				$alto=imagesy($im); //devuelve el alto de la imagen
+			
+				$hex = str_replace("#", "", $hex);
+				$r = hexdec(substr($hex,0,2));
+				$g = hexdec(substr($hex,2,2));
+				$b = hexdec(substr($hex,4,2));
+				 $rgb = array($r, $g, $b);//pasamos de HEX a RGB
+				//Obtenomos el color del pixel para cambiar
+				$colorPixel = imagecolorallocate($im,$rgb[0],$rgb[1],$rgb[2]);
+				for ($i=0; $i<$ancho; $i++){
+					for ($j=0; $j<$alto; $j++){
+						if (imagecolorat($im, $i,$j)!=$colorBlanco){//Si es distinto el pixel cambiamos el color
+							imagesetpixel ( $im ,$i , $j , $colorPixel );
+						}
+					}
+				}
+				//header('Content-Type: image/png');
+				imagepng($im, "./assets/visibilityMaps/map_".$_POST['id_poi'].".png");
+				$cambiado=true;
 			}
 			
 			if (!empty($_FILES['geolocalizacion']['name'])){
 				//borramos la imagen.
 				
-				$file = "assets/visibilityMaps/worldInfo/wordInfo_".$_POST['id_poi'].".png";
+				$file = "assets/visibilityMaps/worldInfo/wordInfo_".$_POST['id_poi'].".pgw";
 				$do = unlink($file);
 				 
 				if($do != true){
@@ -217,6 +296,42 @@ class AdminPOI extends CI_Controller {
 				{
 					echo $this->upload->display_errors();
 				}
+			}
+			if($cambiado==false && $ant->id_bando!=$bando_id){
+				//Obtenemos el color del bando
+				//CARGAMOS EL MODELO DE CONFIGURACION
+				$this->load->model('bando_model');
+				//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+				$data=$this->bando_model->get_bando($bando_id);
+				$hex=$data->color;
+				//cambiamos de color la imagen
+				//Creamos el objeto imagen, como son png uilizamos esta funcion
+				$im = imagecreatefrompng("./assets/visibilityMaps/map_".$_POST['id_poi'].".png"); 			
+				//Se ponen estas dos lineas para conservar las transparecinas de la imagen.
+				imagealphablending($im, true);
+				imagesavealpha($im, true);
+				//Normalmente el primer pixel es de color transparente
+				$colorBlanco=imagecolorat($im, 0,0);
+				$ancho=imagesx($im); //devuelve el ancho de la imagen
+				$alto=imagesy($im); //devuelve el alto de la imagen
+			
+				$hex = str_replace("#", "", $hex);
+				$r = hexdec(substr($hex,0,2));
+				$g = hexdec(substr($hex,2,2));
+				$b = hexdec(substr($hex,4,2));
+				 $rgb = array($r, $g, $b);//pasamos de HEX a RGB
+				//Obtenomos el color del pixel para cambiar
+				$colorPixel = imagecolorallocate($im,$rgb[0],$rgb[1],$rgb[2]);
+				for ($i=0; $i<$ancho; $i++){
+					for ($j=0; $j<$alto; $j++){
+						if (imagecolorat($im, $i,$j)!=$colorBlanco){//Si es distinto el pixel cambiamos el color
+							imagesetpixel ( $im ,$i , $j , $colorPixel );
+						}
+					}
+				}
+				//header('Content-Type: image/png');
+				imagepng($im, "./assets/visibilityMaps/map_".$_POST['id_poi'].".png");
+				
 			}
 		}
 		$this->load->view('templates/header_admin');

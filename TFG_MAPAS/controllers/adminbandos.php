@@ -46,6 +46,14 @@ class AdminBandos extends CI_Controller {
 		//LISTAMOS LA CONFIGURACIONES
 		echo json_encode($template_data['bandos']);
 	}
+	public function get_bando_json($id){
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('bando_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$data=$this->bando_model->get_bando($id);
+		//LISTAMOS LA CONFIGURACIONES
+		echo json_encode($data);
+	}
 	public function lista(){
 		
 		
@@ -106,10 +114,10 @@ class AdminBandos extends CI_Controller {
 		$this->bando_model->delete_bando($id);
 	}
 	
-	public function new_bando($_descrip){
+	public function new_bando(){
 		$this->load->model('bando_model');
-		$data['ban_des']=$_descrip;
-		$data['ban_color']='#000';
+		$data['ban_des']=$_POST['des'];;
+		$data['ban_color']=$_POST['color'];
 		$this->bando_model->insert_bando($data);
 	}
 }
