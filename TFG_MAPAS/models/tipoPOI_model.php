@@ -3,7 +3,7 @@ class tipoPOI_model extends CI_Model
 {
 	var $id;
 	var $description;
-	var $color;
+	var $imagen;
 	function insert_tipoPOI($data)
 	{
 		$this->db->insert('tipo_poi', $data);
@@ -18,8 +18,8 @@ class tipoPOI_model extends CI_Model
    		if($query -> num_rows() == 1)
    		{
 			$rows = $query->result();
-			$this->id = $rows[0]->conf_id;
-			$this->description = $rows[0]->conf_des;
+			$this->id = $rows[0]->tipo_id;
+			$this->description = $rows[0]->tipo_des;
 			return $this;
    		}
 
@@ -38,5 +38,19 @@ class tipoPOI_model extends CI_Model
         $this->db->where('tipo_id', $data['tipo_id']);
         return $this->db->update('tipo_poi', $data);
     }
+	
+	function getNextID(){
+		$this->db->select_max('tipo_id');
+		$query = $this->db->get('tipo_poi');
+		if($query -> num_rows() == 1){
+			$rows = $query->result();
+			if (is_null($rows[0]->tipo_id)){
+				return 1;
+			}
+			return $rows[0]->tipo_id;
+		}
+		return -1;
+	
+	}
 }
 ?>

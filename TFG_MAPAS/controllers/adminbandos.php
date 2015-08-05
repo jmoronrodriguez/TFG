@@ -19,6 +19,9 @@ class AdminBandos extends CI_Controller {
 	 */
 	 
 	 public function index(){
+		$this->load->library('session');
+		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		
 		//CARGAMOS EL MODELO DE CONFIGURACION
 		$this->load->model('bando_model');
 		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
@@ -29,6 +32,9 @@ class AdminBandos extends CI_Controller {
 		$this->load->view('templates/footer_admin');
 	 }
 	public function get_bandos(){
+		$this->load->library('session');
+		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		
 		//CARGAMOS EL MODELO DE CONFIGURACION
 		$this->load->model('bando_model');
 		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS

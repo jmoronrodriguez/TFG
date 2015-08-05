@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row">
 						<div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-10">
                         <h1 class="page-header">
                             Tipo POI
                         </h1>
@@ -20,40 +20,56 @@
                         </ol>
                     </div>
                 </div>
-					  
-						<div class="col-md-8"><input type='text' class='form-control' placeholder='nuevo' id='nuevo'> </div>
-						<div class="col-md-4"><button type='button' class='btn btn-info' id='btn-new'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></div>
-					 
-					
-					
-                    <table class="table table-hover">
-							<thead>
-								<tr>
-								  <th><b>Id</b></th>
-								  <th><b>Descripcion</b></th>
-								  
-								  <th><b>    </b></th>
-								  
-								</tr>
-							  </thead>
-							<tbody id='table-content'> 
-								<?php 
-								foreach ($tipoPOIs as $item){
-									echo("<tr id='fila_".$item->tipo_id."'>");
-									echo("<td>".$item->tipo_id."</td>");
-									echo("<td><div id='noEdit".$item->tipo_id."' >".$item->tipo_des."</div>");
-									echo("<div id='edit".$item->tipo_id."' style='display: none'><input type='text' class='form-control' placeholder='".$item->tipo_des."'  id='textEdit_".$item->tipo_id."'></div></td>");
-									echo("<td ><div id='botonesNoEdit".$item->tipo_id."'><button type='button' class='btn btn-info' id='boton".$item->tipo_id."' onClick='cambiar(".$item->tipo_id.")' > <span class='glyphicon glyphicon-wrench'></span> Normal</button></div>");
-									echo("<div id='botonesEdit".$item->tipo_id."' style='display: none'>");
-									echo("<button type='button' class='btn btn-warning' onClick='edit(".$item->tipo_id.")'><span class='glyphicon glyphicon-edit'></span> Editar</button>&nbsp;");
-									echo("<button type='button' class='btn btn-danger'  onClick='borrar(".$item->tipo_id.")'><span class='glyphicon glyphicon-trash'></span> Borrar</button>&nbsp;");
-									echo("<button type='button' class='btn btn-primary'  onClick='cambiar(".$item->tipo_id.")'><span class='glyphicon glyphicon-remove'></span> Cancelar</button></div></td>");
-									echo("</tr>");
-								}?>
-								
-							  </tbody>
-						</table>
-	
+				<div class="row">
+					<div class="col-lg-10">
+					   <form enctype="multipart/form-data" id="formuploadajax" method="post">
+						<div class="col-md-4"><input type='text' class='form-control' placeholder='nuevo' id='nuevo' name='des_nuevo'> </div>
+						<div class="col-md-4"><input type="file" name="icono" id='icono' accept=".png"> </div>
+						<div class="col-md-4"><button type='submit' class='btn btn-info' id='btn-new'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></div>
+					  </form>
+					 </div>
+				</div>
+				<div class="row">
+					<div class="col-lg-10">	
+						
+							<table class="table table-hover">
+								<thead>
+									<tr>
+									  <th><b>Id</b></th>
+									  <th><b>Descripcion</b></th>
+									  <th><b>Imagen</b></th>
+									  <th><b>    </b></th>
+									  
+									</tr>
+								  </thead>
+								<tbody id='table-content'> 
+
+									<?php 
+									foreach ($tipoPOIs as $item){
+										
+										echo("<tr id='fila_".$item->tipo_id."'>");
+										
+										echo("<td>".$item->tipo_id."</td>");
+										echo("<td><div id='noEdit".$item->tipo_id."' >".$item->tipo_des."</div>");
+										echo("<div id='edit".$item->tipo_id."' style='display: none'>");
+										
+										echo ("<input type='text' class='form-control' placeholder='".$item->tipo_des."'  id='textEdit_".$item->tipo_id."'></div></td>");
+										echo("<td><div id='ImgNoEdit".$item->tipo_id."' ><img src='".asset_url()."img/IconsPOIs/tipoPOI_".$item->tipo_id.".png' height='50px'></div><div id='ImgEdit".$item->tipo_id."' style='display: none'><img src='".asset_url()."img/IconsPOIs/tipoPOI_".$item->tipo_id.".png' height='50px'>");
+										echo ("<form enctype='multipart/form-data' id='formEditar".$item->tipo_id."' method='post'>");
+										echo("<input type='file' name='icono".$item->tipo_id."' id='icono".$item->tipo_id."' accept='.png'></form></div></td>");
+										echo("<td ><div id='botonesNoEdit".$item->tipo_id."'><button type='button' class='btn btn-info' id='boton".$item->tipo_id."' onClick='cambiar(".$item->tipo_id.")' > <span class='glyphicon glyphicon-wrench'></span> Normal</button></div>");
+										echo("<div id='botonesEdit".$item->tipo_id."' style='display: none'>");
+										echo("<button type='button' class='btn btn-warning' onClick='edit(".$item->tipo_id.")'><span class='glyphicon glyphicon-edit'></span> Editar</button>&nbsp;");
+										echo("<button type='button' class='btn btn-danger'  onClick='borrar(".$item->tipo_id.")'><span class='glyphicon glyphicon-trash'></span> Borrar</button>&nbsp;");
+										echo("<button type='button' class='btn btn-primary'  onClick='cambiar(".$item->tipo_id.")'><span class='glyphicon glyphicon-remove'></span> Cancelar</button></div></td>");
+										
+										echo("</tr>");
+										
+									}?>
+								</tbody>
+							</table>
+					</div>
+				</div>
 							
 					
 					
@@ -83,10 +99,13 @@
 	
 	
 	<script> 
+	var verision=1;
 	//FUNCION CAMBIAR BOTONES
 	function cambiar(id){
 		$("#edit"+id).toggle();
 		$("#noEdit"+id).toggle();
+		$("#ImgEdit"+id).toggle();
+		$("#ImgNoEdit"+id).toggle();
 		$("#botonesNoEdit"+id).toggle();
 		$("#botonesEdit"+id).toggle();
 	}
@@ -117,14 +136,30 @@
 	}
 	
 	function editConfirm(id) {
-			edit=$("#textEdit_"+id).val();
+		verision++;
+		var formData = new FormData($("#formEditar"+id)[0]);
+		formData.append("tipo_id", id);
+		formData.append("tipo_des", $("#textEdit_"+id).val());
+		$.ajax({
+			url: "<?= site_url(array('adminTipoPOI', 'edit')) ?>",
+			type: "post",
+			dataType: "html",
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false
+		})
+		.done(function(res){
+			nuevos();
+		});
+			/*edit=$("#textEdit_"+id).val();
 			url__ = '<?= site_url(array('adminTipoPOI', 'edit')) ?>/'+id+'/'+edit;
             $.ajax({
 				url: url__,
 			});
 			//Restauramos la fila
 			$("#noEdit"+id).html(edit);
-			cambiar(id);
+			cambiar(id);*/
     }
 	function borrar (id){
 		$('#data_id').val(id);//Guardamos el id
@@ -167,19 +202,28 @@
 		cambiar(id);
 	}
 	
-	
-	$("#btn-new").click(function(e) {
-		//obtenemos el nombre del nuevo registro
-		descrip=$("#nuevo").val();
-		//insertamos mediante ajax el nuevo registro
-		url__ = '<?= site_url(array('adminTipoPOI', 'new_tipoPOI')) ?>/'+descrip;
+	//Nuevo tipo POI
+	$("#formuploadajax").on("submit", function(e){
+		e.preventDefault();
+		var f = $(this);
+		var formData = new FormData(document.getElementById("formuploadajax"));
 		$.ajax({
-            url: url__,
-        }).done(function() {
+			url: "<?= site_url(array('adminTipoPOI', 'new_tipoPOI')) ?>",
+			type: "post",
+			dataType: "html",
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false
+		})
+		.done(function(res){
+			console.log(res);
 			nuevos();
 		});
-		//consultamos mediante ajax el nuevo registro
-		//creamos una fila nueva con el nuevo registro.
+	});
+	
+	$("#btn-new").click(function(e) {
+		
 		
 	});
 	function nuevos(){
@@ -200,6 +244,9 @@
 				nuevaFila+="<td>"+item.tipo_id+"</td>";
 				nuevaFila+="<td><div id='noEdit"+item.tipo_id+"' >"+item.tipo_des+"</div>";
 				nuevaFila+="<div id='edit"+item.tipo_id+"' style='display: none'><input type='text' class='form-control' placeholder='"+item.tipo_des+"'  id='textEdit_"+item.tipo_id+"'></div></td>";
+				nuevaFila+="<td><div id='ImgNoEdit"+item.tipo_id+"' ><img src='<?=asset_url()?>img/IconsPOIs/tipoPOI_"+item.tipo_id+".png?"+verision+".0' height='50px'></div><div id='ImgEdit"+item.tipo_id+"' style='display: none'><img src='<?=asset_url()?>img/IconsPOIs/tipoPOI_"+item.tipo_id+".png?"+verision+".0' height='50px'>";
+				nuevaFila+="<form enctype='multipart/form-data' id='formEditar"+item.tipo_id+"' method='post'>";
+				nuevaFila+="<input type='file' name='icono"+item.tipo_id+"' id='icono"+item.tipo_id+"' accept='.png'></form></div></td>";
 				nuevaFila+="<td ><div id='botonesNoEdit"+item.tipo_id+"'><button type='button' class='btn btn-info' id='boton"+item.tipo_id+"' onClick='cambiar("+item.tipo_id+")' > <span class='glyphicon glyphicon-wrench'></span> Normal</button></div>";
 				nuevaFila+="<div id='botonesEdit"+item.tipo_id+"' style='display: none'>";
 				nuevaFila+="<button type='button' class='btn btn-warning' onClick='edit("+item.tipo_id+")'><span class='glyphicon glyphicon-edit'></span> Editar</button>&nbsp;";
@@ -211,6 +258,7 @@
 			});
 		});
 		$("#nuevo").val("");
+		$("#icono").val("");
 	}
 	</script>
 	<script>

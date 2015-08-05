@@ -80,7 +80,18 @@
 			  population: 4000,
 			  rainfall: 500
 			});	
+			var iconStyle2 = new ol.style.Style({
+			  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+				anchor: [1, 1],
+				anchorXUnits: 'pixels',
+				anchorYUnits: 'pixels',
+				opacity: 1,
+				
+				src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_'+item.tipo_id+'.png'
+			  }))
+			});
 			iconFeature.set('id',item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
+			iconFeature.setStyle(iconStyle2);//Le añadimos el estilo segun el tipo de POI
 			//CREAMOS EL ARRAY DE iconFeatures			
 			vectorSource.addFeature(iconFeature);
 			//CREMOS LA BOUNDIND BOX DE LA IMAGEN [minX, minY, MaxX, MaxY] 
@@ -141,6 +152,7 @@
 	//EVENTOS DE RATON EN EL MAPA
 	
 	map.on('click', function(evt) {
+		
 		var feature = map.forEachFeatureAtPixel(evt.pixel,
 					function(feature, layer) {
 						return feature;
@@ -155,16 +167,6 @@
 				}
 			}
 		}
-	});
-	// change mouse cursor when over marker
-	map.on('pointermove', function(e) {
-	  if (e.dragging) {
-		$(element).popover('destroy');
-		return;
-	  }
-	  var pixel = map.getEventPixel(e.originalEvent);
-	  var hit = map.hasFeatureAtPixel(pixel);
-	  map.getTargetElement().style.cursor = hit ? 'pointer' : '';
 	});
 	
 	//**SLIDER**////

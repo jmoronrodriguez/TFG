@@ -231,13 +231,25 @@
 	var utmProjection = ol.proj.get("EPSG:23030");
 	var proje = ol.proj.get('EPSG:3857');
 	
+	var iconStyle2 = new ol.style.Style({
+	  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+		anchor: [1, 1],
+		anchorXUnits: 'pixels',
+		anchorYUnits: 'pixels',
+		opacity: 1,
+		
+		src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_6.png'//'http://ol3js.org/en/master/examples/data/icon.png'
+	  }))
+	});
 	//CREACION DE LOS MARKERT 
 	//CONSULTAMOS MEDIANTE AJAX LA LISTA DE POIS
 	var URL = "<?= site_url(array('adminPOI', 'get_poi_json')) ?>";
-	var iconFeatures=[];
+	var styleSource=[];
 	var vectorSource = new ol.source.Vector({
       //create empty vector
-    })
+    });
+	styleSource.push(iconStyle2);
+	
 	$.getJSON( URL)
 	.done(function( data ) {
 		$.each( data, function( i, item ) {
@@ -248,10 +260,22 @@
 			  population: 4000,
 			  rainfall: 500
 			});	
+			var iconStyle2 = new ol.style.Style({
+			  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+				anchor: [1, 1],
+				anchorXUnits: 'pixels',
+				anchorYUnits: 'pixels',
+				opacity: 1,
+				
+				src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_'+item.tipo_id+'.png'//'http://ol3js.org/en/master/examples/data/icon.png'
+			  }))
+			});
 			iconFeature.set('id',item.poi_id);
 			iconFeature.setId(item.poi_id);
+			iconFeature.setStyle(iconStyle2);
 			//CREAMOS EL ARRAY DE iconFeatures			
 			vectorSource.addFeature(iconFeature);
+			
 		});
 	});
 	

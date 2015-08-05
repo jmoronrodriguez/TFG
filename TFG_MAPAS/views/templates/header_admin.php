@@ -54,7 +54,7 @@
 	<script>$('#widget').draggable();</script>
 	<!--AÑADIMOS LA ETIQUETA META PARA QUE SE VEA BIEN EN LOS NAVEGADORES MOVILIES-->
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	
+	<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 	</head>
 <body>	
 	<?=js('nouislider.min.js')?>

@@ -10,6 +10,8 @@ class AdminPOI extends CI_Controller {
 	}
 	
 	public function nuevo(){
+		$this->load->library('session');
+		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
 		
 		//LISTAMOS LA CONFIGURACIONES
 		$this->load->view('templates/header_admin');
@@ -36,7 +38,7 @@ class AdminPOI extends CI_Controller {
 			$prueba[$i]['poi_des']=$poi->poi_des;
 			$prueba[$i]['poi_X']=$poi->poi_X;
 			$prueba[$i]['poi_Y']=$poi->poi_Y;
-			
+			$prueba[$i]['tipo_id']=$poi->tipo_id;
 			//Obtenemos las coordenadas del archivo pgw (World Info)
 			$fp = fopen("assets/visibilityMaps/worldInfo/wordInfo_".$poi->poi_id.".pgw", "r");
 			$lineas;
@@ -199,9 +201,7 @@ class AdminPOI extends CI_Controller {
 	}else{
 		echo $_POST['Nombre'];
 	}
-		$this->load->view('templates/header_admin');
-		$this->load->view('admin/admin_POI');
-		$this->load->view('templates/footer_admin');
+		redirect('/adminPOI/nuevo', 'refresh');
 	}
 
 	public function edit(){
@@ -352,9 +352,7 @@ class AdminPOI extends CI_Controller {
 				
 			}
 		}
-		$this->load->view('templates/header_admin');
-		$this->load->view('admin/admin_POI');
-		$this->load->view('templates/footer_admin');
+		redirect('/adminPOI/nuevo', 'refresh');
 	}
 	
 	public function delete($id){

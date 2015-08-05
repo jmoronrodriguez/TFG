@@ -23,8 +23,10 @@
                 <div class="row">
 					
 					  
-						<div class="col-md-8"><input type='text' class='form-control' placeholder='nuevo' id='nuevo'> </div>
-						<div class="col-md-4"><button type='button' class='btn btn-info' id='btn-new'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></div>
+						<div class="col-md-3"><input type='text' class='form-control' placeholder='nuevo' id='nuevo'> </div>
+						<div class="col-md-3"><input type='text' class='form-control' placeholder='minEdad' id='minEdad'> </div>
+						<div class="col-md-3"><input type='text' class='form-control' placeholder='maxEdad' id='maxEdad'> </div>
+						<div class="col-md-3"><button type='button' class='btn btn-info' id='btn-new'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></div>
 					 
 					
 					
@@ -33,7 +35,8 @@
 								<tr>
 								  <th><b>Id</b></th>
 								  <th><b>Descripcion</b></th>
-								  
+								  <th><b>Edad Minima</b></th>
+								  <th><b>Edad Maxima</b></th>
 								  <th><b>    </b></th>
 								  
 								</tr>
@@ -45,6 +48,9 @@
 									echo("<td>".$item->conf_id."</td>");
 									echo("<td><div id='noEdit".$item->conf_id."' >".$item->conf_des."</div>");
 									echo("<div id='edit".$item->conf_id."' style='display: none'><input type='text' class='form-control' placeholder='".$item->conf_des."'  id='textEdit_".$item->conf_id."'></div></td>");
+									echo("<td><div id='noEditMin".$item->conf_id."'>".$item->min_edad."</div><div id='editMin".$item->conf_id."' style='display: none'><input type='text' class='form-control' placeholder='".$item->min_edad."'  id='minEdit_".$item->conf_id."'></div></td>");
+									echo("<td><div id='noEditMax".$item->conf_id."'>".$item->max_edad."</div><div id='editMax".$item->conf_id."' style='display: none'><input type='text' class='form-control' placeholder='".$item->max_edad."'  id='maxEdit_".$item->conf_id."'></div></td>");
+									
 									echo("<td ><div id='botonesNoEdit".$item->conf_id."'><button type='button' class='btn btn-info' id='boton".$item->conf_id."' onClick='cambiar(".$item->conf_id.")' > <span class='glyphicon glyphicon-wrench'></span> Normal</button></div>");
 									echo("<div id='botonesEdit".$item->conf_id."' style='display: none'>");
 									echo("<button type='button' class='btn btn-warning' onClick='edit(".$item->conf_id.")'><span class='glyphicon glyphicon-edit'></span> Editar</button>&nbsp;");
@@ -89,6 +95,11 @@
 	function cambiar(id){
 		$("#edit"+id).toggle();
 		$("#noEdit"+id).toggle();
+		
+		$("#editMin"+id).toggle();
+		$("#noEditMin"+id).toggle();
+		$("#editMax"+id).toggle();
+		$("#noEditMax"+id).toggle();
 		$("#botonesNoEdit"+id).toggle();
 		$("#botonesEdit"+id).toggle();
 	}
@@ -119,14 +130,14 @@
 	}
 	//EDITAR CONFIGURACION
 	function editConfirm(id) {
-			edit=$("#textEdit_"+id).val();
-			url__ = '<?= site_url(array('adminConfiguracion', 'edit')) ?>/'+id+'/'+edit;
-            $.ajax({
-				url: url__,
-			});
-			//Restauramos la fila
-			$("#noEdit"+id).html(edit);
-			cambiar(id);
+			descrip=$("#textEdit_"+id).val();
+			minEdad=$("#minEdit_"+id).val();
+			maxEdad=$("#maxEdit_"+id).val();
+		//insertamos mediante ajax el nuevo registro
+		url__ = '<?= site_url(array('adminConfiguracion', 'edit')) ?>/'+descrip;
+		$.post(url__, {des: descrip, minEdad: minEdad, maxEdad: maxEdad, id: id}, function(respuesta) {
+			nuevos();
+		});
        //});
     }
 	//BORRAR CONFIGURACION
@@ -134,7 +145,7 @@
 	function borrar (id){
 		$('#data_id').val(id);//Guardamos el id
 		$('#borrar_editar').val(2);//Asignamos el 1 para editar
-		var URL = "<?= site_url(array('adminPOI', 'get_poiByTipo_json')) ?>/"+id;
+		var URL = "<?= site_url(array('adminPOI', 'get_poiByConfiguracion_json')) ?>/"+id;
 		var tam=0;
 		$.ajax({
 			  type: "GET",
@@ -173,11 +184,11 @@
 	$("#btn-new").click(function(e) {
 		//obtenemos el nombre del nuevo registro
 		descrip=$("#nuevo").val();
+		minEdad=$("#minEdad").val();
+		maxEdad=$("#maxEdad").val();
 		//insertamos mediante ajax el nuevo registro
 		url__ = '<?= site_url(array('adminConfiguracion', 'new_configuration')) ?>/'+descrip;
-		$.ajax({
-            url: url__,
-        }).done(function() {
+		$.post(url__, {des: descrip, minEdad: minEdad, maxEdad: maxEdad}, function(respuesta) {
 			nuevos();
 		});
 		//consultamos mediante ajax el nuevo registro
@@ -202,10 +213,12 @@
 				nuevaFila+="<td>"+item.conf_id+"</td>";
 				nuevaFila+="<td><div id='noEdit"+item.conf_id+"' >"+item.conf_des+"</div>";
 				nuevaFila+="<div id='edit"+item.conf_id+"' style='display: none'><input type='text' class='form-control' placeholder='"+item.conf_des+"'  id='textEdit_"+item.conf_id+"'></div></td>";
+				nuevaFila+="<td><div id='noEditMin"+item.conf_id+"'>"+item.min_edad+"</div><div id='editMin"+item.conf_id+"' style='display: none'><input type='text' class='form-control' placeholder='"+item.min_edad+"'  id='minEdit_"+item.conf_id+"'></div></td>";
+				nuevaFila+="<td><div id='noEditMax"+item.conf_id+"'>"+item.max_edad+"</div><div id='editMax"+item.conf_id+"' style='display: none'><input type='text' class='form-control' placeholder='"+item.max_edad+"'  id='maxEdit_"+item.conf_id+"'></div></td>";
 				nuevaFila+="<td ><div id='botonesNoEdit"+item.conf_id+"'><button type='button' class='btn btn-info' id='boton"+item.conf_id+"' onClick='cambiar("+item.conf_id+")' > <span class='glyphicon glyphicon-wrench'></span> Normal</button></div>";
 				nuevaFila+="<div id='botonesEdit"+item.conf_id+"' style='display: none'>";
 				nuevaFila+="<button type='button' class='btn btn-warning' onClick='edit("+item.conf_id+")'><span class='glyphicon glyphicon-edit'></span> Editar</button>&nbsp;";
-				nuevaFila+="<button type='button' class='btn btn-danger' onClick='borrar("+item.conf_id+")'><span class='glyphicon glyphicon-trash'></span> Editar</button>&nbsp;";
+				nuevaFila+="<button type='button' class='btn btn-danger' onClick='borrar("+item.conf_id+")'><span class='glyphicon glyphicon-trash'></span> Borrar</button>&nbsp;";
 				nuevaFila+="<button type='button' class='btn btn-primary'  onClick='cambiar("+item.conf_id+")'><span class='glyphicon glyphicon-remove'></span> Cancelar</button></div></td>";
 				nuevaFila+="</tr>";
 				$(nuevaFila).appendTo('#table-content');
@@ -213,6 +226,8 @@
 			});
 		});
 		$("#nuevo").val("");
+		$("#minEdad").val("");
+		$("#maxEdad").val("");
 	}
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
