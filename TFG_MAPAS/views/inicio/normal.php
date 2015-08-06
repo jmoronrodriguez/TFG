@@ -44,9 +44,111 @@
             </div>
         </div>
     </div>
+	<div class="modal fade bs-example-modal-sm" id="confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="titleConfirm">Leyenda</h4>
+				</div>
+				<div class="modal-body" id='bodyConfirm'>
+					<div class="btn-group" data-toggle="buttons">
+						<div><label class="btn  active">
+						<input type="radio" name="options" id="option1" autocomplete="off" checked> Radio 1 
+						</label></div>
+					  
+					  <div>
+					  <label class="btn">
+						<input type="radio" name="options" id="option2" autocomplete="off"> Radio 2
+					  </label>
+					  </div><div>
+					  <label class="btn ">
+						<input type="radio" name="options" id="option3" autocomplete="off"> Radio 3
+					  </label>
+					  </div>
+					</div>
+						
+				</div>
+				<div class="modal-footer">
+					
+					
+				</div>
+			</div>
+		</div>
+	</div>
 	
 	
 	 <script type="text/javascript">
+	/**variables Globales**/
+	var configSelect=-1;
+	/**CONTROL DE LA LEYENDA***/
+	
+	/**
+	 * Define a namespace for the application.
+	 */
+	window.app = {};
+	var app = window.app;
+
+	/**
+	 * @constructor
+	 * @extends {ol.control.Control}
+	 * @param {Object=} opt_options Control options.
+	 */
+	app.LeyendaControl = function(opt_options) {
+
+	  var options = opt_options || {};
+
+	  
+
+	  var onClickTipos = function(e) {
+		consultarTipos();
+		$('#confirm').modal('toggle');
+	  };
+	  var onClickBandos = function(e) {
+		consultarBandos();
+		$('#confirm').modal('toggle');
+	  };
+	  var onClickConfiguracion = function(e) {
+		consultarConfiguracion();
+		$('#confirm').modal('toggle');
+	  };
+	  var buttonTipos = document.createElement('button');
+	  buttonTipos.innerHTML = 'T';	
+	  buttonTipos.title ='Tipos';
+	  buttonTipos.className='TipoButton';
+	  buttonTipos.addEventListener('click', onClickTipos, false);
+	  buttonTipos.addEventListener('touchstart', onClickTipos, false);
+	  
+	  var buttonBandos = document.createElement('button');
+	  buttonBandos.innerHTML = 'B';	
+	  buttonBandos.title ='Bando';
+	  buttonBandos.className='BandoButton';
+	  buttonBandos.addEventListener('click', onClickBandos, false);
+	  buttonBandos.addEventListener('touchstart', onClickBandos, false);
+	  
+	  var buttonConfiguracion = document.createElement('button');
+	  buttonConfiguracion.innerHTML = 'C';	
+	  buttonConfiguracion.title ='Configuracion';
+	  buttonConfiguracion.className='ConfiButton';
+	  buttonConfiguracion.addEventListener('click', onClickConfiguracion, false);
+	  buttonConfiguracion.addEventListener('touchstart', onClickConfiguracion, false);
+
+	  var element = document.createElement('div');
+	  element.className = 'leyendaControl ol-unselectable ol-control';
+	  element.title ='Tipos';
+	  element.appendChild(buttonConfiguracion);
+	  element.appendChild(buttonTipos);
+	  element.appendChild(buttonBandos);
+
+	  ol.control.Control.call(this, {
+		element: element,
+		target: options.target
+	  });
+
+	};
+	ol.inherits(app.LeyendaControl, ol.control.Control);
+	
+	
 	
 	/***DEFINIMOS LA PROYECCION ED50 USO 30N*****/
 	proj4.defs("EPSG:23030", "+proj=utm +zone=30 +ellps=intl"+
@@ -69,79 +171,32 @@
 	var vectorSource = new ol.source.Vector({//VECTOR PARA LOS MARKET
       //create empty vector
     })
-	var URL = "<?= site_url(array('adminPOI', 'get_mapas_json')) ?>";
-	$.getJSON( URL)
-	.done(function( data ) {
-		$.each( data, function( i, item ) {
-			var coordinates=[item.poi_X,item.poi_Y];
-			var iconFeature = new ol.Feature({
-			  geometry: new ol.geom.Point(coordinates),
-			  name: item.poi_des,
-			  population: 4000,
-			  rainfall: 500
-			});	
-			var iconStyle2 = new ol.style.Style({
-			  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-				anchor: [1, 1],
-				anchorXUnits: 'pixels',
-				anchorYUnits: 'pixels',
-				opacity: 1,
-				
-				src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_'+item.tipo_id+'.png'
-			  }))
-			});
-			iconFeature.set('id',item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
-			iconFeature.setStyle(iconStyle2);//Le añadimos el estilo segun el tipo de POI
-			//CREAMOS EL ARRAY DE iconFeatures			
-			vectorSource.addFeature(iconFeature);
-			//CREMOS LA BOUNDIND BOX DE LA IMAGEN [minX, minY, MaxX, MaxY] 
-			var extent = [ item.minX,item.minY, item.maxX,item.maxY ];
-			//CREAMOS LA CAPA
-			var newLayer = new ol.layer.Image({
-				source: new ol.source.ImageStatic({
-					url: '<?=asset_url();?>visibilityMaps/map_'+item.poi_id+'.png',
-					imageExtent: ol.proj.transformExtent(extent, 'EPSG:23030', 'EPSG:3857'),//Transformamos la BB de ED50 a WGS84 Web Mercator
-					projection: projPrin
-				  })
-				});
-			newLayer.set('id',item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
-			newLayer.setOpacity(0.85);
-			newLayer.setHue(3.14);
-			arrayCapasMapas.push(newLayer);
-		});
-	});
+	
 	
 	//**CREAMOS LA CAPA CON EL CONJUNTO DE CAPAS***/
 	 var mapasVisibildad=new ol.layer.Group({
 		layers:arrayCapasMapas
 	 });
-	 //ESTILO DE LOS ICONOS
-	 var iconStyle = new ol.style.Style({
-	  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-		anchor: [1, 1],
-		anchorXUnits: 'fraction',
-		anchorYUnits: 'fraction',
-		opacity: 1,
-		src: '<?=asset_url();?>img/castle.png'//'http://ol3js.org/en/master/examples/data/icon.png'
-	  }))
-	});
+	 
 	 //CREAMOS LA CAPA DE MARKETS
 	var marketsLayer = new ol.layer.Vector({
-	  source: vectorSource,
-	  style: iconStyle
+	  source: vectorSource
 	});
 	 var map = new ol.Map({
+		  controls: ol.control.defaults({
+			attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+			  collapsible: false
+			})
+		  }).extend([
+			new app.LeyendaControl()
+		  ]),
  		  layers: [
 			capaBase,
 			mapasVisibildad,
 			marketsLayer
 		  ],
 		  target: 'basicMap',
-		  controls: ol.control.defaults({
-			attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-			  collapsible: false
-			})
-		  }),
+		  
 		  view: new ol.View({
 			projection: projPrin,//Utilizamos la proyeccion por defecto WGS84 Web Mercator UTM
 			center: [-423014.1592, 4546636.6720],
@@ -168,7 +223,12 @@
 			}
 		}
 	});
-	
+	// change mouse cursor when over marker
+	map.on('pointermove', function(e) {
+	  var pixel = map.getEventPixel(e.originalEvent);
+	  var hit = map.hasFeatureAtPixel(pixel);
+	  map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+	});
 	//**SLIDER**////
 	var slider = document.getElementById('slider-range');
 	noUiSlider.create(slider, {
@@ -207,4 +267,119 @@
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
     });
+	
+	$('.TipoButton, .BandoButton').tooltip({
+	  placement: 'right'
+	});
+	/********FUNCIONES DE APOYO********/
+	
+	/**
+		Contulta los bando mediante AJAX y lo coloca en la leyenda
+	*/
+	function consultarBandos(){
+		var URL = "<?= site_url(array('adminBandos', 'get_bandos_json')) ?>";
+		$.getJSON( URL)
+		.done(function( data ) {
+			var textoHtml='';
+			$.each( data, function( i, item ) {
+				
+				textoHtml+="<div><button type='button' class='btn' id='noEdit2'  style='background:"+item.ban_color+"; padding: 10px;' ></button> "+item.ban_des+"</div>";
+				
+				
+			});
+			$('#bodyConfirm').html(textoHtml);
+			$('#titleConfirm').html("Leyenda Bandos");
+		});
+		
+	}
+	
+	function consultarTipos(){
+		var URL = "<?= site_url(array('adminTipoPOI', 'get_tipoPOIs_json')) ?>";
+		$.getJSON( URL)
+		.done(function( data ) {
+			var textoHtml='';
+			$.each( data, function( i, item ) {
+				
+				textoHtml+="<div><button type='button' class='btn' id='noEdit2'  style='background: url(<?=asset_url();?>img/IconsPOIs/tipoPOI_"+item.tipo_id+".png);background-size: 30px 30px; background-repeat: no-repeat; padding: 15px;' ></button> "+item.tipo_des+"</div>";
+				
+				
+			});
+			$('#titleConfirm').html("Leyenda tipos POI's");
+			$('#bodyConfirm').html(textoHtml);
+		});		
+	}
+	function consultarConfiguracion(){
+		var URL = "<?= site_url(array('adminConfiguracion', 'get_configurations_json')) ?>";
+		$.getJSON( URL)
+		.done(function( data ) {
+			var textoHtml='<div class="btn-group" data-toggle="buttons">';
+			$.each( data, function( i, item ) {
+				if (item.conf_id==configSelect){
+					textoHtml+='<div><label class="btn active ">';
+					textoHtml+='<input type="radio" name="confOptions" id="option_'+item.conf_id+'" autocomplete="off" value="'+item.conf_id+'" checked> '+item.conf_des+' ';
+					textoHtml+='</label></div>';
+				}else{
+					textoHtml+='<div><label class="btn  ">';
+					textoHtml+='<input type="radio" name="confOptions" id="option_'+item.conf_id+'" autocomplete="off" value="'+item.conf_id+'"> '+item.conf_des+' ';
+					textoHtml+='</label></div>';
+				}
+				
+				
+				
+			});
+			textoHtml+='</div>';
+			$('#bodyConfirm').html(textoHtml);
+			$('#titleConfirm').html("Leyenda Configuraciones");
+			$("input[name=confOptions]:radio").bind("change", function(){cambioConfiguracion($(this).val());});
+		});		
+		
+	}
+	function cambioConfiguracion(id){
+		configSelect=id;
+		var URL = "<?= site_url(array('adminPOI', 'get_mapasBydata_json')) ?>";
+		arrayCapasMapas.clear();
+		vectorSource.clear();
+		$.getJSON(URL, { conf: id}, function(json) {
+			$.each( json, function( i, item ) {
+				var coordinates=[item.poi_X,item.poi_Y];
+				var iconFeature = new ol.Feature({
+				  geometry: new ol.geom.Point(coordinates),
+				  name: item.poi_des,
+				  population: 4000,
+				  rainfall: 500
+				});	
+				var iconStyle2 = new ol.style.Style({
+				  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					anchor: [1, 1],
+					anchorXUnits: 'pixels',
+					anchorYUnits: 'pixels',
+					opacity: 1,
+					
+					src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_'+item.tipo_id+'.png'
+				  }))
+				});
+				iconFeature.set('id',item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
+				iconFeature.setStyle(iconStyle2);//Le añadimos el estilo segun el tipo de POI
+				
+				//CREAMOS EL ARRAY DE iconFeatures			
+				vectorSource.addFeature(iconFeature);
+				//CREMOS LA BOUNDIND BOX DE LA IMAGEN [minX, minY, MaxX, MaxY] 
+				var extent = [ item.minX,item.minY, item.maxX,item.maxY ];
+				//CREAMOS LA CAPA
+				var newLayer = new ol.layer.Image({
+					source: new ol.source.ImageStatic({
+						url: '<?=asset_url();?>visibilityMaps/map_'+item.poi_id+'.png',
+						imageExtent: ol.proj.transformExtent(extent, 'EPSG:23030', 'EPSG:3857'),//Transformamos la BB de ED50 a WGS84 Web Mercator
+						projection: projPrin
+					  })
+					});
+				newLayer.set('id',item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
+				newLayer.setOpacity(0.85);
+				newLayer.setHue(3.14);
+				arrayCapasMapas.push(newLayer);
+			});
+		});
+
+	}
+    </script>
     </script>

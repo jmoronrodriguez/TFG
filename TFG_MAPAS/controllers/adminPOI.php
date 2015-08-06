@@ -60,6 +60,38 @@ class AdminPOI extends CI_Controller {
 			
 		echo json_encode ($prueba);
 	}
+	public function get_mapasBydata_json(){
+		$this->load->model('POI_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$poi['POIs']=$this->POI_model->get_POIbyConfiguracion($_GET['conf']);
+		$i=0;
+		$prueba=[];
+		foreach ($poi['POIs'] as $poi){
+			$prueba[$i]['poi_id']=$poi->poi_id;
+			$prueba[$i]['poi_des']=$poi->poi_des;
+			$prueba[$i]['poi_X']=$poi->poi_X;
+			$prueba[$i]['poi_Y']=$poi->poi_Y;
+			$prueba[$i]['tipo_id']=$poi->tipo_id;
+			//Obtenemos las coordenadas del archivo pgw (World Info)
+			$fp = fopen("assets/visibilityMaps/worldInfo/wordInfo_".$poi->poi_id.".pgw", "r");
+			$lineas;
+			$j=0;
+			while(!feof($fp)) {
+				$lineas[$j] = fgets($fp);
+				$j++;
+			}
+			fclose($fp);
+			$prueba[$i]['minX']=(float)$lineas[4];
+			$prueba[$i]['minY']=(float)$lineas[5];
+			//Obtenemos el alto y el ancho de la imagen para calcular las otras coordenadas que faltan
+			$nombre_fichero= asset_url()."visibilityMaps/map_".$poi->poi_id.".png";
+			list($ancho, $alto, $tipo, $atributos) = getimagesize("./assets/visibilityMaps/map_".$poi->poi_id.".png");
+			$prueba[$i]['maxX']=((float)$lineas[4]+($ancho*50));
+			$prueba[$i]['maxY']=((float)$lineas[5] -($alto*50));
+			$i++;
+		}
+		echo json_encode ($prueba);
+	}
 	public function get_poiById_json($id){
 		//CARGAMOS EL MODELO DE CONFIGURACION
 		$this->load->model('POI_model');

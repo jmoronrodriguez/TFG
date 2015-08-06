@@ -44,6 +44,16 @@
 		.popover-content {
 		  min-width: 200px;
 		}
+		.leyendaControl {
+		  top: 65px;
+		  left: .5em;
+		}
+		.ol-touch .leyendaControl {
+		  top: 80px;
+		}
+		.tooltip-inner {
+		  white-space: nowrap;
+		}
 	</style>
 	<script>$('#widget').draggable();</script>
 	<!--AÑADIMOS LA ETIQUETA META PARA QUE SE VEA BIEN EN LOS NAVEGADORES MOVILIES-->
