@@ -179,44 +179,96 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade bs-example-modal-sm" id="leyenda" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="titleConfirm">Leyenda</h4>
+				</div>
+				<div class="modal-body" id='bodyConfirm'>
+					
+						
+				</div>
+				<div class="modal-footer">
+					
+					
+				</div>
+			</div>
+		</div>
+	</div>
 	 <script type="text/javascript">
-	//SLIDER 
-	var slider = document.getElementById('slider-range');
+	/**variables Globales**/
+	var configSelect=-1;
+	var arrayBandos=[];
+	var arrayTipos=[];
+	var arrayEdad=[];
+	/**CONTROL DE LA LEYENDA***/
+	
+	/**
+	 * Define a namespace for the application.
+	 */
+	window.app = {};
+	var app = window.app;
 
-	noUiSlider.create(slider, {
-		start: [ 20, 80 ], // Handle start position
-		step: 10, // Slider moves in increments of '10'
-		margin: 20, // Handles must be more than '20' apart
-		connect: true, // Display a colored bar between the handles
-		behaviour: 'tap-drag', // Move handle on tap, bar is draggable
-		range: { // Slider can select '0' to '100'
-			'min': 0,
-			'max': 100
-		},
-		pips: { // Show a scale with the slider
-			mode: 'steps',
-			density: 2
-		}
-	});
-	var MinInput = document.getElementById('MinEdad'),
-	MaxInput = document.getElementById('MaxEdad');
+	/**
+	 * @constructor
+	 * @extends {ol.control.Control}
+	 * @param {Object=} opt_options Control options.
+	 */
+	app.LeyendaControl = function(opt_options) {
 
-	// When the slider value changes, update the input and span
-	slider.noUiSlider.on('update', function( values, handle ) {
-		if ( handle ) {
-			MaxInput.value = values[handle];
-		} else {
-			MinInput.value = values[handle];
-		}
-	});
+	  var options = opt_options || {};
 
-	// When the input changes, set the slider value
-	MaxInput.addEventListener('change', function(){
-		slider.noUiSlider.set([null, this.value]);
-	});
-	MinInput.addEventListener('change', function(){
-		slider.noUiSlider.set([null, this.value]);
-	});
+	  
+
+	  var onClickTipos = function(e) {
+		consultarTipos();
+		$('#leyenda').modal('toggle');
+	  };
+	  var onClickBandos = function(e) {
+		consultarBandos();
+		$('#leyenda').modal('toggle');
+	  };
+	  var onClickConfiguracion = function(e) {
+		consultarConfiguracion();
+		$('#leyenda').modal('toggle');
+	  };
+	  var buttonTipos = document.createElement('button');
+	  buttonTipos.innerHTML = 'T';	
+	  buttonTipos.title ='Tipos';
+	  buttonTipos.className='TipoButton';
+	  buttonTipos.addEventListener('click', onClickTipos, false);
+	  buttonTipos.addEventListener('touchstart', onClickTipos, false);
+	  
+	  var buttonBandos = document.createElement('button');
+	  buttonBandos.innerHTML = 'B';	
+	  buttonBandos.title ='Bando';
+	  buttonBandos.className='BandoButton';
+	  buttonBandos.addEventListener('click', onClickBandos, false);
+	  buttonBandos.addEventListener('touchstart', onClickBandos, false);
+	  
+	  var buttonConfiguracion = document.createElement('button');
+	  buttonConfiguracion.innerHTML = 'C';	
+	  buttonConfiguracion.title ='Configuracion';
+	  buttonConfiguracion.className='ConfiButton';
+	  buttonConfiguracion.addEventListener('click', onClickConfiguracion, false);
+	  buttonConfiguracion.addEventListener('touchstart', onClickConfiguracion, false);
+
+	  var element = document.createElement('div');
+	  element.className = 'leyendaControl ol-unselectable ol-control';
+	  element.title ='Tipos';
+	  element.appendChild(buttonConfiguracion);
+	  element.appendChild(buttonTipos);
+	  element.appendChild(buttonBandos);
+
+	  ol.control.Control.call(this, {
+		element: element,
+		target: options.target
+	  });
+
+	};
+	ol.inherits(app.LeyendaControl, ol.control.Control);
 	
 	//Ocultar/Mostrar Menu
     $("#menu-toggle").click(function(e) {
@@ -231,53 +283,44 @@
 	var utmProjection = ol.proj.get("EPSG:23030");
 	var proje = ol.proj.get('EPSG:3857');
 	
-	var iconStyle2 = new ol.style.Style({
-	  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-		anchor: [1, 1],
-		anchorXUnits: 'pixels',
-		anchorYUnits: 'pixels',
-		opacity: 1,
-		
-		src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_6.png'//'http://ol3js.org/en/master/examples/data/icon.png'
-	  }))
-	});
+	
 	//CREACION DE LOS MARKERT 
 	//CONSULTAMOS MEDIANTE AJAX LA LISTA DE POIS
-	var URL = "<?= site_url(array('adminPOI', 'get_poi_json')) ?>";
-	var styleSource=[];
+	
+	
 	var vectorSource = new ol.source.Vector({
       //create empty vector
     });
-	styleSource.push(iconStyle2);
 	
-	$.getJSON( URL)
-	.done(function( data ) {
-		$.each( data, function( i, item ) {
-			var coordinates=[item.poi_X,item.poi_Y];
-			var iconFeature = new ol.Feature({
-			  geometry: new ol.geom.Point(coordinates),
-			  name: item.poi_des,
-			  population: 4000,
-			  rainfall: 500
-			});	
-			var iconStyle2 = new ol.style.Style({
-			  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-				anchor: [1, 1],
-				anchorXUnits: 'pixels',
-				anchorYUnits: 'pixels',
-				opacity: 1,
+	
+	// $.getJSON( URL)
+	// .done(function( data ) {
+		// $.each( data, function( i, item ) {
+			// var coordinates=[item.poi_X,item.poi_Y];
+			// var iconFeature = new ol.Feature({
+			  // geometry: new ol.geom.Point(coordinates),
+			  // name: item.poi_des,
+			  // population: 4000,
+			  // rainfall: 500
+			// });	
+			// var iconStyle2 = new ol.style.Style({
+			  // image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+				// anchor: [1, 1],
+				// anchorXUnits: 'pixels',
+				// anchorYUnits: 'pixels',
+				// opacity: 1,
 				
-				src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_'+item.tipo_id+'.png'//'http://ol3js.org/en/master/examples/data/icon.png'
-			  }))
-			});
-			iconFeature.set('id',item.poi_id);
-			iconFeature.setId(item.poi_id);
-			iconFeature.setStyle(iconStyle2);
-			//CREAMOS EL ARRAY DE iconFeatures			
-			vectorSource.addFeature(iconFeature);
+				// src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_'+item.tipo_id+'.png'//'http://ol3js.org/en/master/examples/data/icon.png'
+			  // }))
+			// });
+			// iconFeature.set('id',item.poi_id);
+			// iconFeature.setId(item.poi_id);
+			// iconFeature.setStyle(iconStyle2);
+			////CREAMOS EL ARRAY DE iconFeatures			
+			// vectorSource.addFeature(iconFeature);
 			
-		});
-	});
+		// });
+	// });
 	
 	
 	
@@ -294,7 +337,6 @@
 	//CREAMOS LA CAPA DE MARKETS
 	var marketsLayer = new ol.layer.Vector({
 	  source: vectorSource,
-	  style: iconStyle
 	});
 	
 	//CAPA DE OPEN STREEP MAP	
@@ -312,7 +354,9 @@
 			attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
 			  collapsible: false
 			})
-		  }),
+		  }).extend([
+			new app.LeyendaControl()
+		  ]),
 		  view: new ol.View({
 			projection: proje,
 			center: [-423014.1592, 4546636.6720],
@@ -325,26 +369,27 @@
 		map.addOverlay(popup);
 		map.on('click', function(evt) {
 		  var element = popup.getElement();
-		  
+		  $(element).popover('destroy');
 		  var feature = map.forEachFeatureAtPixel(evt.pixel,
 			  function(feature, layer) {
 				return feature;
 			  });
+			
 		  if (feature) {
-			$(element).popover('destroy');
+			
 			var geometry = feature.getGeometry();
 			var coord = geometry.getCoordinates();
 			var id=feature.get('id');
-			popup.setPosition(coord);
+			
 			$(element).popover({
-			  'title':feature.name,	
-			  'placement': 'top',
-			  'html': true,
-			  'content': '<button type="button" class="btn btn-warning"  onClick="editar('+id+')"><span class="glyphicon glyphicon-edit"></span> Editar</button> <button type="button" class="btn btn-danger"  onClick="borrar('+id+')"><span class="glyphicon glyphicon-trash"></span> Borrar</button>'
+				'placement': 'top',
+				'animation': false,
+				'html': true,
+				'content': '<button type="button" class="btn btn-warning"  onClick="editar('+id+')"><span class="glyphicon glyphicon-edit"></span> Editar</button> <button type="button" class="btn btn-danger"  onClick="borrar('+id+')"><span class="glyphicon glyphicon-trash"></span> Borrar</button>'
 			});
 			$('#id_poi').val(id);
 			$( "#popup" ).attr( "title", feature.name );
-			
+			popup.setPosition(coord);
 			$(element).popover('show');
 			$('.popover-title').html(feature.q.name);
 		  } else {
@@ -353,8 +398,8 @@
 			  $('#CoorY').val(coordinate[1]);
 			  var hdms = ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:23030');
 
-			  $(element).popover('destroy');
-			  popup.setPosition(coordinate);
+			  
+			  
 			  // the keys are quoted to prevent renaming in ADVANCED mode.
 			  $(element).popover({
 				'placement': 'top',
@@ -362,9 +407,9 @@
 				'html': true,
 				'content': '<p>Coordenadas en ED50, UTM USO 30:</p><code>X:' + hdms[0] + '</code></BR><code>Y:' + hdms[1] + '</code></BR><button type="button" class="btn btn-primary"  onClick="nuevo()">Nuevo</button> '
 			  });
-			  $( "#popup" ).attr( "title", "coordenadas" );
-			  
+			  $( "#popup" ).attr( "title", "nuevo POI" );			  
 			  $('#id_poi').val(-1);
+			  popup.setPosition(coordinate);
 			  $(element).popover('show');
 			  $('.popover-title').html("coordenadas");
 		  }
@@ -527,11 +572,7 @@
 		$('#delete').click(function(){
 			var id=$('#id_poi').val();
 			var URL = "<?= site_url(array('adminPOI', 'delete')) ?>/"+id;
-			//$.getJSON( URL)
-			//.done(function( data ) {
-				/*var feature=vectorSource.getFeatureById(id);
-				vectorSource.removeFeature(feature);*/
-			//});*/
+			
 			var feature=vectorSource.getFeatureById(id);
 			vectorSource.removeFeature(feature);
 		});
@@ -565,6 +606,137 @@
 				});
 			});
 		});
+		function consultarBandos(){
+		var textoHtml="";
+		for (i=0; i<arrayBandos.length; i++){
+			if (arrayBandos[i].seleccionado)
+				textoHtml+="<div><button type='button' class='btn' id='buttonBandos_"+arrayBandos[i].id+"'  style='background:"+arrayBandos[i].color_bando+"; padding: 10px;' onClick='cambioBandos("+arrayBandos[i].id+");'></button> "+arrayBandos[i].des_bando+"</div>";	
+			else 
+				textoHtml+="<div><button type='button' class='btn buttonDeselec' id='buttonBandos_"+arrayBandos[i].id+"'  style='background:"+arrayBandos[i].color_bando+"; padding: 10px;' onClick='cambioBandos("+arrayBandos[i].id+");'></button> "+arrayBandos[i].des_bando+"</div>";	
+		}	
+		if (arrayBandos.length==0){
+			textoHtml='Selecciona una configuracion primero';
+		}
+		$('#bodyConfirm').html(textoHtml);
+		$('#titleConfirm').html("Leyenda Bandos");
+		
+		
+	}
+	/********FUNCIONES DE APOYO********/
+	
+	/**
+		Contulta los bando mediante AJAX y lo coloca en la leyenda
+	*/
+	function consultarTipos(){
+		
+		var textoHtml="";
+		for (i=0; i<arrayTipos.length; i++){
+			if (arrayTipos[i].seleccionado)
+				textoHtml+="<div><button type='button' class='btn' id='buttonTipos_"+arrayTipos[i].id+"'  style='background: url(<?=asset_url();?>img/IconsPOIs/tipoPOI_"+arrayTipos[i].id_tipo+".png);background-size: 30px 30px; background-repeat: no-repeat; padding: 15px;' onClick='cambioTipos("+arrayTipos[i].id+");'></button> "+arrayTipos[i].des_tipo+"</div>";
+			else 
+				textoHtml+="<div><button type='button' class='btn buttonDeselec' id='buttonTipos_"+arrayTipos[i].id+"'  style='background: url(<?=asset_url();?>img/IconsPOIs/tipoPOI_"+arrayTipos[i].id_tipo+".png);background-size: 30px 30px; background-repeat: no-repeat; padding: 15px;' onClick='cambioTipos("+arrayTipos[i].id+");'></button> "+arrayTipos[i].des_tipo+"</div>";
+		}	
+		if (arrayTipos.length==0){
+			textoHtml='Selecciona una configuracion primero';
+		}
+		$('#bodyConfirm').html(textoHtml);
+		$('#titleConfirm').html("Leyenda Tipos POI's");
+	}
+	function consultarConfiguracion(){
+		var URL = "<?= site_url(array('adminConfiguracion', 'get_configurations_json')) ?>";
+		$.getJSON( URL)
+		.done(function( data ) {
+			var textoHtml='<div class="btn-group" data-toggle="buttons">';
+			$.each( data, function( i, item ) {
+				if (item.conf_id==configSelect){
+					textoHtml+='<div><label class="btn active ">';
+					textoHtml+='<input type="radio" name="confOptions" id="option_'+item.conf_id+'" autocomplete="off" value="'+item.conf_id+'" checked> '+item.conf_des+' ';
+					textoHtml+='</label></div>';
+				}else{
+					textoHtml+='<div><label class="btn  ">';
+					textoHtml+='<input type="radio" name="confOptions" id="option_'+item.conf_id+'" autocomplete="off" value="'+item.conf_id+'"> '+item.conf_des+' ';
+					textoHtml+='</label></div>';
+				}
+				
+				
+				
+			});
+			textoHtml+='</div>';
+			$('#bodyConfirm').html(textoHtml);
+			$('#titleConfirm').html("Leyenda Configuraciones");
+			$("input[name=confOptions]:radio").bind("change", function(){cambioConfiguracion($(this).val());});
+		});		
+		
+	}
+	function cambioConfiguracion(id){
+		configSelect=id;
+		arrayBandos.splice(0,arrayBandos.length);//Eliminamos todos los elementos
+		arrayTipos.splice(0,arrayTipos.length);//Eliminamos todos los elementos
+		arrayEdad.splice(0,arrayEdad.length);//Eliminamos todos los elementos
+		var URL = "<?= site_url(array('adminPOI', 'cambioConfiguracion')) ?>";
+		$.getJSON(URL, { conf: id}, function(json) {
+			
+			for (i=0; i<json.bandos.length; i++){
+				var bando={id:i, id_bando:Number(json.bandos[i].ban_id), des_bando: json.bandos[i].ban_des, color_bando: json.bandos[i].ban_color, seleccionado: true};
+				arrayBandos.push(bando);
+			}
+			for (i=0; i<json.tipoPOIs.length; i++){
+				var tipo={id:i, id_tipo:Number(json.tipoPOIs[i].tipo_id), des_tipo: json.tipoPOIs[i].tipo_des, seleccionado: true};
+				arrayTipos.push(tipo);
+			}
+			actualizarCapas();
+		});
+
+	}
+	function cambioBandos(id){
+		$('#buttonBandos_'+id).toggleClass( "buttonDeselec" );
+		arrayBandos[id].seleccionado= !(arrayBandos[id].seleccionado);
+		actualizarCapas();
+		
+	}
+	function cambioTipos(id){
+		$('#buttonTipos_'+id).toggleClass( "buttonDeselec" );
+		arrayTipos[id].seleccionado= !(arrayTipos[id].seleccionado);
+		actualizarCapas();
+		
+	}
+	
+	function actualizarCapas(){
+		var URL = "<?= site_url(array('adminPOI', 'get_poiByData_json')) ?>";
+		//Limpiamos las capas
+		vectorSource.clear();
+		
+		$.post(URL, {conf: configSelect, bandos: arrayBandos, tipos: arrayTipos}, function(json) {
+			var rJson=JSON.parse(json);
+			$.each( rJson.POIs, function( i, item ) {
+				var coordinates=[item.poi_X,item.poi_Y];
+				var iconFeature = new ol.Feature({
+				  geometry: new ol.geom.Point(coordinates),
+				  name: item.poi_des,
+				  population: 4000,
+				  rainfall: 500
+				});	
+				var iconStyle2 = new ol.style.Style({
+				  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					anchor: [1, 1],
+					anchorXUnits: 'pixels',
+					anchorYUnits: 'pixels',
+					opacity: 1,
+					
+					src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_'+item.tipo_id+'.png'//'http://ol3js.org/en/master/examples/data/icon.png'
+				  }))
+				});
+				iconFeature.set('id',item.poi_id);
+				iconFeature.setId(item.poi_id);
+				iconFeature.setStyle(iconStyle2);
+				//CREAMOS EL ARRAY DE iconFeatures			
+				vectorSource.addFeature(iconFeature);
+				console.log(item.tipo_id);
+				
+			});
+		});
+		
+	}
     </script>
 
 

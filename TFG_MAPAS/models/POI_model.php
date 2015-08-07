@@ -91,6 +91,21 @@ class POI_model extends CI_Model
         return FALSE;
 	
 	}
+	function get_POIsbyData($data){
+		//SELECT * FROM `poi` WHERE conf_id=1 AND `poi_ini`>=10 AND `poi_fin`<=90 and bando_id IN(1,5,6) and tipo_id in (1,5,6) 
+		$this->db->select('*');
+		$this->db->from('poi');
+		$this->db->where('conf_id', $data['id_conf']);
+		if (isset($data['rango'])){
+			$array = array('poi_ini >=' => $data['rango'][0], 'poi_fin <=' => $data['rango'][1]);
+			$this->db->where($array);
+		}
+		$this->db->where_in('bando_id', $data['bandos']);
+		$this->db->where_in('tipo_id', $data['tipoPOI']);
+		$query = $this->db-> get();
+		return $query->result();
+	
+	}
 	function getNextID(){
 		$this->db->select_max('poi_id');
 		$query = $this->db->get('poi');

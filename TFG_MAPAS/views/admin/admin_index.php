@@ -16,6 +16,12 @@
 						<li> <a href="<?= site_url(array('adminBandos', 'get_bandos')) ?>"><img src="<?=asset_url();?>icons/POI MAP.svg" width='95px' height=' 95px'/></a></li>
 					</ul>
 				</div>
+				<div class="row">
+					<ul class='adminMenu'>
+						<li> <a href="<?= site_url(array('admin', 'cambiarUsuario')) ?>"><img src="<?=asset_url();?>icons/User.svg" width='95px' height=' 95px'/></a> </li>
+						
+					</ul>
+				</div>
 			</div>
 	</div>
 </div>

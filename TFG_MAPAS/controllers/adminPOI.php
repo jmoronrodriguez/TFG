@@ -63,7 +63,27 @@ class AdminPOI extends CI_Controller {
 	public function get_mapasBydata_json(){
 		$this->load->model('POI_model');
 		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
-		$poi['POIs']=$this->POI_model->get_POIbyConfiguracion($_GET['conf']);
+		//conf: configSelect, bandos: arrayBandos, tipos: arrayTipos, rango: arrayEdad
+		$data['id_conf']=$_POST['conf'];
+		$j=0;
+		$data['bandos']=array();
+		for ($i=0; $i<count($_POST['bandos']); $i++){
+			if ($_POST['bandos'][$i]['seleccionado'] === "true"){
+				$data['bandos'][$j]=$_POST['bandos'][$i]['id_bando'];
+				$j++;
+			}
+		}
+		$j=0;
+		$data['tipoPOI']=array();
+		for ($i=0; $i<count($_POST['tipos']); $i++){
+			if ($_POST['tipos'][$i]['seleccionado'] === "true"){
+				$data['tipoPOI'][$j]=$_POST['tipos'][$i]['id_tipo'];
+				$j++;
+			}
+		}
+		$data['rango']=$_POST['rango'];
+		//print_r($data);
+		$poi['POIs']=$this->POI_model->get_POIsbyData($data);
 		$i=0;
 		$prueba=[];
 		foreach ($poi['POIs'] as $poi){
@@ -124,6 +144,31 @@ class AdminPOI extends CI_Controller {
 		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
 		$poi['POIs']=$this->POI_model->get_POIbyConfiguracion($id);
 		$poi['tam']=count($poi['POIs']);
+		//LISTAMOS LA CONFIGURACIONES
+		echo json_encode($poi);
+	}
+	public function get_poiByData_json(){
+		$data['id_conf']=$_POST['conf'];
+		$j=0;
+		$data['bandos']=array();
+		for ($i=0; $i<count($_POST['bandos']); $i++){
+			if ($_POST['bandos'][$i]['seleccionado'] === "true"){
+				$data['bandos'][$j]=$_POST['bandos'][$i]['id_bando'];
+				$j++;
+			}
+		}
+		$j=0;
+		$data['tipoPOI']=array();
+		for ($i=0; $i<count($_POST['tipos']); $i++){
+			if ($_POST['tipos'][$i]['seleccionado'] === "true"){
+				$data['tipoPOI'][$j]=$_POST['tipos'][$i]['id_tipo'];
+				$j++;
+			}
+		}
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('POI_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$poi['POIs']=$this->POI_model->get_POIsbyData($data);
 		//LISTAMOS LA CONFIGURACIONES
 		echo json_encode($poi);
 	}
@@ -385,6 +430,17 @@ class AdminPOI extends CI_Controller {
 			}
 		}
 		redirect('/adminPOI/nuevo', 'refresh');
+	}
+	public function cambioConfiguracion(){
+		$id=$_GET['conf'];
+		$this->load->model('configuracion_model');
+		
+		$data['confi']=$this->configuracion_model->get_configuration($id);
+		$this->load->model('bando_model');
+		$data['bandos']=$this->bando_model->get_bandos();
+		$this->load->model('tipoPOI_model');
+		$data['tipoPOIs']=$this->tipoPOI_model->get_tipoPOIs();
+		echo json_encode($data);
 	}
 	
 	public function delete($id){

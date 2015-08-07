@@ -50,6 +50,14 @@
 			height: 100%;
 			width: 100px;
 		}
+		.leyendaControl {
+		  top: 65px;
+		  left: .5em;
+		}
+		.buttonDeselec {
+		  background: #FFFFFF !important;
+		  border: thin solid;
+		}
 	</style>
 	<script>$('#widget').draggable();</script>
 	<!--AÑADIMOS LA ETIQUETA META PARA QUE SE VEA BIEN EN LOS NAVEGADORES MOVILIES-->
@@ -60,18 +68,18 @@
 	<?=js('nouislider.min.js')?>
 	<!--NAV BAR Principal-->
 	<div class="navbar navbar-material-light-green" style="border-radius: 0px; margin-bottom: 0px;">
-        <div class="container" style="margin-left: 0px;">
+        <div class="container" style="margin-left: 0px; width:100%">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" id='menu-toggle' data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="<?= site_url(array('admin', 'administracion')) ?>">TFG-Administracion</a>
             </div>
-			<div class="navbar-collapse collapse">
-                          
+			<div class="navbar-collapse collapse navbar-responsive-collapse">
+                 <ul class="nav navbar-nav navbar-right">
+					
+					<li><a href="<?= site_url(array('admin', 'logout')) ?>"><img src="<?=asset_url();?>icons/logout.png" width='20px' height=' 20px'/></a></li>
+				  </ul>         
 			</div>
                         <!--/.nav-collapse -->
         </div>

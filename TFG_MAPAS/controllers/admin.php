@@ -51,6 +51,10 @@ class Admin extends CI_Controller {
 			redirect('/admin/', 'refresh');
 			return TRUE;
 		}
+		$data['error']='Introduzca correctamente usuario/contraseña';
+		$this->load->helper('url');
+		$this->load->view('admin/login',$data);
+		
 	}
 	private function _set_session($user){
 		$this->load->library('session');
@@ -62,10 +66,38 @@ class Admin extends CI_Controller {
 		$this->session->set_userdata('logged_in', $sess_array);
 	}
 	
-	function logout(){   
+	public function logout(){   
 	   $this->load->library('session');
 	   $this->session->unset_userdata('logged_in'); // desactivamos la varialble de session "habilitado". Equivale a dejar sin acceso al usuario.
 	   $this->login();
+	}
+	
+	public function cambiarUsuario(){
+		$this->load->library('session');
+		$this->load->helper('url');
+		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		if (!isset($_POST['username'])){
+			
+			$data['username']=$this->session->userdata['logged_in']['username'];
+			$this->load->view('templates/header_admin');
+			$this->load->view('admin/admin_cambioUsuario',$data);
+			$this->load->view('templates/footer_admin');
+		}else{
+			//CAMBIAMOS EL USUARIO
+			$this->load->model('usuario');
+			if (strlen($_POST['password']==0)){
+				$this->usuario->updateUsername($this->session->userdata['logged_in']['id'],$_POST['username']);
+			}else{
+				$this->usuario->update($this->session->userdata['logged_in']['id'],$_POST['username'], $_POST['password']);
+			}
+			
+			$this->session->userdata['logged_in']['username']=$_POST['username'];
+			$data['username']=$this->session->userdata['logged_in']['username'];
+			$this->load->view('templates/header_admin');
+			$this->load->view('admin/admin_cambioUsuario',$data);
+			$this->load->view('templates/footer_admin');
+		}
+		
 	}
 }
 

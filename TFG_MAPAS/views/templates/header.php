@@ -54,6 +54,10 @@
 		.tooltip-inner {
 		  white-space: nowrap;
 		}
+		.buttonDeselec {
+		  background: #FFFFFF !important;
+		  border: thin solid;
+		}
 	</style>
 	<script>$('#widget').draggable();</script>
 	<!--AÑADIMOS LA ETIQUETA META PARA QUE SE VEA BIEN EN LOS NAVEGADORES MOVILIES-->

@@ -52,12 +52,26 @@
 					<h4 class="modal-title" id="titleConfirm">Leyenda</h4>
 				</div>
 				<div class="modal-body" id='bodyConfirm'>
-					
+					<div class="btn-group" data-toggle="buttons">
+						<div><label class="btn  active">
+						<input type="radio" name="options" id="option1" autocomplete="off" checked> Radio 1 
+						</label></div>
+					  
+					  <div>
+					  <label class="btn">
+						<input type="radio" name="options" id="option2" autocomplete="off"> Radio 2
+					  </label>
+					  </div><div>
+					  <label class="btn ">
+						<input type="radio" name="options" id="option3" autocomplete="off"> Radio 3
+					  </label>
+					  </div>
+					</div>
 						
 				</div>
 				<div class="modal-footer">
 					
-					
+					<button type="button" data-dismiss="modal" class="btn btn-primary">Salir</button>
 				</div>
 			</div>
 		</div>
@@ -67,9 +81,6 @@
 	 <script type="text/javascript">
 	/**variables Globales**/
 	var configSelect=-1;
-	var arrayBandos=[];
-	var arrayTipos=[];
-	var arrayEdad=[];
 	/**CONTROL DE LA LEYENDA***/
 	
 	/**
@@ -212,12 +223,7 @@
 			}
 		}
 	});
-	// change mouse cursor when over marker
-	map.on('pointermove', function(e) {
-	  var pixel = map.getEventPixel(e.originalEvent);
-	  var hit = map.hasFeatureAtPixel(pixel);
-	  map.getTargetElement().style.cursor = hit ? 'pointer' : '';
-	});
+	
 	//**SLIDER**////
 	var slider = document.getElementById('slider-range');
 	noUiSlider.create(slider, {
@@ -266,36 +272,34 @@
 		Contulta los bando mediante AJAX y lo coloca en la leyenda
 	*/
 	function consultarBandos(){
-		var textoHtml="";
-		for (i=0; i<arrayBandos.length; i++){
-			if (arrayBandos[i].seleccionado)
-				textoHtml+="<div><button type='button' class='btn' id='buttonBandos_"+arrayBandos[i].id+"'  style='background:"+arrayBandos[i].color_bando+"; padding: 10px;' onClick='cambioBandos("+arrayBandos[i].id+");'></button> "+arrayBandos[i].des_bando+"</div>";	
-			else 
-				textoHtml+="<div><button type='button' class='btn buttonDeselec' id='buttonBandos_"+arrayBandos[i].id+"'  style='background:"+arrayBandos[i].color_bando+"; padding: 10px;' onClick='cambioBandos("+arrayBandos[i].id+");'></button> "+arrayBandos[i].des_bando+"</div>";	
-		}	
-		if (arrayBandos.length==0){
-			textoHtml='Selecciona una configuracion primero';
-		}
-		$('#bodyConfirm').html(textoHtml);
-		$('#titleConfirm').html("Leyenda Bandos");
-		
+		var URL = "<?= site_url(array('adminBandos', 'get_bandos_json')) ?>";
+		$.getJSON( URL)
+		.done(function( data ) {
+			var textoHtml='';
+			$.each( data, function( i, item ) {
+				
+				textoHtml+="<div><button type='button' class='btn' id='noEdit2'  style='background:"+item.ban_color+"; padding: 10px;' ></button> "+item.ban_des+"</div>";
+				
+				
+			});
+			$('#bodyConfirm').html(textoHtml);
+		});
 		
 	}
 	
 	function consultarTipos(){
-		
-		var textoHtml="";
-		for (i=0; i<arrayTipos.length; i++){
-			if (arrayTipos[i].seleccionado)
-				textoHtml+="<div><button type='button' class='btn' id='buttonTipos_"+arrayTipos[i].id+"'  style='background: url(<?=asset_url();?>img/IconsPOIs/tipoPOI_"+arrayTipos[i].id_tipo+".png);background-size: 30px 30px; background-repeat: no-repeat; padding: 15px;' onClick='cambioTipos("+arrayTipos[i].id+");'></button> "+arrayTipos[i].des_tipo+"</div>";
-			else 
-				textoHtml+="<div><button type='button' class='btn buttonDeselec' id='buttonTipos_"+arrayTipos[i].id+"'  style='background: url(<?=asset_url();?>img/IconsPOIs/tipoPOI_"+arrayTipos[i].id_tipo+".png);background-size: 30px 30px; background-repeat: no-repeat; padding: 15px;' onClick='cambioTipos("+arrayTipos[i].id+");'></button> "+arrayTipos[i].des_tipo+"</div>";
-		}	
-		if (arrayTipos.length==0){
-			textoHtml='Selecciona una configuracion primero';
-		}
-		$('#bodyConfirm').html(textoHtml);
-		$('#titleConfirm').html("Leyenda Tipos POI's");
+		var URL = "<?= site_url(array('adminTipoPOI', 'get_tipoPOIs_json')) ?>";
+		$.getJSON( URL)
+		.done(function( data ) {
+			var textoHtml='';
+			$.each( data, function( i, item ) {
+				
+				textoHtml+="<div><button type='button' class='btn' id='noEdit2'  style='background: url(<?=asset_url();?>img/IconsPOIs/tipoPOI_"+item.tipo_id+".png);background-size: 30px 30px; background-repeat: no-repeat; padding: 20px;' ></button> "+item.tipo_des+"</div>";
+				
+				
+			});
+			$('#bodyConfirm').html(textoHtml);
+		});		
 	}
 	function consultarConfiguracion(){
 		var URL = "<?= site_url(array('adminConfiguracion', 'get_configurations_json')) ?>";
@@ -318,86 +322,17 @@
 			});
 			textoHtml+='</div>';
 			$('#bodyConfirm').html(textoHtml);
-			$('#titleConfirm').html("Leyenda Configuraciones");
 			$("input[name=confOptions]:radio").bind("change", function(){cambioConfiguracion($(this).val());});
 		});		
 		
 	}
 	function cambioConfiguracion(id){
 		configSelect=id;
-		arrayBandos.splice(0,arrayBandos.length);//Eliminamos todos los elementos
-		arrayTipos.splice(0,arrayTipos.length);//Eliminamos todos los elementos
-		arrayEdad.splice(0,arrayEdad.length);//Eliminamos todos los elementos
-		var URL = "<?= site_url(array('adminPOI', 'cambioConfiguracion')) ?>";
-		$.getJSON(URL, { conf: id}, function(json) {
-			var slider = document.getElementById('slider-range');
-			slider.noUiSlider.destroy();//Destruimos el slider
-			noUiSlider.create(slider, {
-				start: [ json.confi.min_edad, json.confi.max_edad ], // Handle start position
-				step: 5,
-				margin: 20, // Handles must be more than '20' apart
-				connect: true, // Display a colored bar between the handles
-				direction: 'rtl', // Put '0' at the bottom of the slider
-				orientation: 'vertical', // Orient the slider vertically
-				behaviour: 'tap-drag', // Move handle on tap, bar is draggable
-				range: { // Slider can select '0' to '100'
-					'min': Number(json.confi.min_edad),
-					'max': Number(json.confi.max_edad)
-				}
-			});
-			//**LINSTENER DEL SLIDER****/
-			var MinInput = document.getElementById('minEdad'),
-			MaxInput = document.getElementById('maxEdad');
-			arrayEdad=[ json.confi.min_edad, json.confi.max_edad ];
-			// When the slider value changes, update the input and span
-			slider.noUiSlider.on('update', function( values, handle ) {
-				
-				if ( handle ) {
-					MaxInput.innerHTML  = values[handle];
-				} else {
-					MinInput.innerHTML  = values[handle];
-				}
-				
-			});
-			slider.noUiSlider.on('change', function( values, handle ) {
-				arrayEdad=values;
-				actualizarCapas();
-				
-			});
-			for (i=0; i<json.bandos.length; i++){
-				var bando={id:i, id_bando:Number(json.bandos[i].ban_id), des_bando: json.bandos[i].ban_des, color_bando: json.bandos[i].ban_color, seleccionado: true};
-				arrayBandos.push(bando);
-			}
-			for (i=0; i<json.tipoPOIs.length; i++){
-				var tipo={id:i, id_tipo:Number(json.tipoPOIs[i].tipo_id), des_tipo: json.tipoPOIs[i].tipo_des, seleccionado: true};
-				arrayTipos.push(tipo);
-			}
-			actualizarCapas();
-		});
-
-	}
-	function cambioBandos(id){
-		$('#buttonBandos_'+id).toggleClass( "buttonDeselec" );
-		arrayBandos[id].seleccionado= !(arrayBandos[id].seleccionado);
-		actualizarCapas();
-		
-	}
-	function cambioTipos(id){
-		$('#buttonTipos_'+id).toggleClass( "buttonDeselec" );
-		arrayTipos[id].seleccionado= !(arrayTipos[id].seleccionado);
-		actualizarCapas();
-		
-	}
-	
-	function actualizarCapas(){
 		var URL = "<?= site_url(array('adminPOI', 'get_mapasBydata_json')) ?>";
-		//Limpiamos las capas
 		arrayCapasMapas.clear();
 		vectorSource.clear();
-		
-		$.post(URL, {conf: configSelect, bandos: arrayBandos, tipos: arrayTipos, rango: arrayEdad}, function(json) {
-			var rJson=JSON.parse(json);
-			$.each( rJson, function( i, item ) {
+		$.getJSON(URL, { conf: id}, function(json) {
+			$.each( json, function( i, item ) {
 				var coordinates=[item.poi_X,item.poi_Y];
 				var iconFeature = new ol.Feature({
 				  geometry: new ol.geom.Point(coordinates),
@@ -436,7 +371,6 @@
 				arrayCapasMapas.push(newLayer);
 			});
 		});
-		
+
 	}
-    </script>
     </script>

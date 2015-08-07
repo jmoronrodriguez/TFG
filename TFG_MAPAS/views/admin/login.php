@@ -68,6 +68,11 @@
 <body>	
 	 <div class="container">
 		<div class="form-signin">
+		<?php
+			if (isset($error)){
+				echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';
+			}
+		?>
       <?=form_open('admin/atentificacion'); ?>
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="username" class="sr-only">Email address</label>

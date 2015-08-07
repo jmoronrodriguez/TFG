@@ -3,6 +3,8 @@ class configuracion_model extends CI_Model
 {
 	var $id;
 	var $description;
+	var $max_edad;
+	var $min_edad;
 	function insert_cofiguration($data)
 	{
 		$this->db->insert('configuracion', $data);
@@ -19,6 +21,8 @@ class configuracion_model extends CI_Model
 			$rows = $query->result();
 			$this->id = $rows[0]->conf_id;
 			$this->description = $rows[0]->conf_des;
+			$this->max_edad = $rows[0]->max_edad;
+			$this->min_edad = $rows[0]->min_edad;
 			return $this;
    		}
 

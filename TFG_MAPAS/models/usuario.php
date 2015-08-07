@@ -30,7 +30,17 @@ class usuario extends CI_Model
         return FALSE;
  	}
  	
-	
+	function updateUsername($id, $username){
+		$this->db->where('id_usuario', $id);
+		$data['name_usuario']=$username;
+        return $this->db->update('usuarios', $data);
+	}
+	function update($id, $username, $password){
+		$this->db->where('id_usuario', $id);
+		$data['name_usuario']=$username;
+		$data['pass_usuario']=hash('md5', $password);
+        return $this->db->update('usuarios', $data);
+	}
 
 }
 

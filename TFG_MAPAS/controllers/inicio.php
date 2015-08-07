@@ -15,4 +15,8 @@ class Inicio extends CI_Controller {
 			$this->load->view('inicio/prueba');
 			$this->load->view('templates/footer');
 		}
+		
+		public function pruebaJson(){
+			echo count($_GET['conf']);
+		}
 }
