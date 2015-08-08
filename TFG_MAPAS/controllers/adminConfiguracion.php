@@ -24,6 +24,15 @@ class AdminConfiguracion extends CI_Controller {
 		//LISTAMOS LA CONFIGURACIONES
 		echo json_encode($template_data['configuration']);
 	}
+	public function get_configuration_json(){
+		$id=$_GET['conf'];
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('configuracion_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$confi=$this->configuracion_model->get_configuration($id);
+		//LISTAMOS LA CONFIGURACIONES
+		echo json_encode($confi);
+	}
 	public function edit(){
 		$data['conf_id']=$_POST['id'];
 		$data['conf_des']=$_POST['des'];

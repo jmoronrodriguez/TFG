@@ -509,6 +509,19 @@
 			}
 			event.preventDefault();
 		});
+		
+		var slider = document.getElementById('slider-range');
+		noUiSlider.create(slider, {
+			start: [ 0,100], // Handle start position
+			step: 10,
+			connect: true, // Display a colored bar between the handles
+			behaviour: 'tap-drag', // Move handle on tap, bar is draggable
+			range: { // Slider can select '0' to '100'
+				'min':0,
+				'max': 100
+			}
+		});
+		
 		//FUNICON NUEVO**********
 		function nuevo(){
 			//RESETEAMOS EL FORMULARIO
@@ -518,7 +531,7 @@
 			$('#slt_bando').val(-1);
 			$('#slt_bando').parent().removeClass('has-error');
 			$('#slt_bando').parent().removeClass('has-success');
-			$('#slt_configur').val(-1);
+			$('#slt_configur').val(configSelect);
 			$('#slt_configur').parent().removeClass('has-error');
 			$('#slt_configur').parent().removeClass('has-success');
 			$('#slt_tipo').val(-1);
@@ -537,16 +550,28 @@
 			$('#geolocalizacion').parent().removeClass('has-error');
 			$('#geolocalizacion').parent().removeClass('has-success');
 			$('#id_poi').val(-1);
+			if (configSelect!=-1){
+				var URL = "<?= site_url(array('adminConfiguracion', 'get_configuration_json')) ?>";//CONSULTAMOS LA CONFIGURACION MEDIANTE AJAX Y JSON
+				$.ajax({
+					  type: "GET",
+					  url: URL,
+					  data: { conf:configSelect},
+					  async: false,//lo ponemos sincrono para que slider se cree y luego cambiemos su valor
+					  dataType: "json",
+					  success: function(data) {
+						 crearSlider(data);
+					  }
+				 });
+			}
 			$('#myModal').modal('toggle');
 			$('.modal-title').html('POI Nuevo');
+			
 		}
 		//FUNCION EDITAR+++++++
 		function editar(id ){
 			var URL = "<?= site_url(array('adminPOI', 'get_poiById_json')) ?>/"+id;
 			$.getJSON( URL)
 			.done(function( data ) {
-				var slider = document.getElementById('slider-range');
-				slider.noUiSlider.set([data.MinEdad, data.MaxEdad]);
 				$('#Nombre').val(data.poi_des);
 				$('#slt_bando').val(data.id_bando);
 				$('#slt_configur').val(data.id_conf);
@@ -555,14 +580,78 @@
 				$('#MinEdad').val(data.MinEdad);
 				$('#myModal').modal('toggle');
 				$('.modal-title').html('Editar POI');
-				 $('#CoorX').val(data.posX);
-				 $('#id_poi').val(id);
-			  $('#CoorY').val(data.posY);
+				$('#CoorX').val(data.posX);
+				$('#id_poi').val(id);
+			    $('#CoorY').val(data.posY);
+				var URL = "<?= site_url(array('adminConfiguracion', 'get_configuration_json')) ?>";//CONSULTAMOS LA CONFIGURACION MEDIANTE AJAX Y JSON
+				$.ajax({
+					  type: "GET",
+					  url: URL,
+					  data: { conf: data.id_conf},
+					  async: false,//lo ponemos sincrono para que slider se cree y luego cambiemos su valor
+					  dataType: "json",
+					  success: function(data) {
+						 crearSlider(data);
+					  }
+				 });
+				var slider = document.getElementById('slider-range');
+				slider.noUiSlider.set( [Number(data.MinEdad), Number(data.MaxEdad)] );
 			});
 		}
 		
 		//FUNCION borrar+++++++
-		
+		$('#slt_configur').change(function(){
+			var id=$(this).val();
+			if (id!=-1){
+				var URL = "<?= site_url(array('adminConfiguracion', 'get_configuration_json')) ?>";//CONSULTAMOS LA CONFIGURACION MEDIANTE AJAX Y JSON
+				$.ajax({
+					  type: "GET",
+					  url: URL,
+					  data: { conf:id},
+					  async: false,//lo ponemos sincrono para que slider se cree y luego cambiemos su valor
+					  dataType: "json",
+					  success: function(data) {
+						 crearSlider(data);
+					  }
+				 });
+			}
+			 
+		});
+		/**DESTRUYE EL SLIDER Y CREA UNO NUEVO CON LA CONFIGURACION PASADA POR PARAMETRO***/
+		function crearSlider(json){
+			// var URL = "<?= site_url(array('adminConfiguracion', 'get_configuration_json')) ?>";//CONSULTAMOS LA CONFIGURACION MEDIANTE AJAX Y JSON
+			// $.getJSON(URL, { conf: id}, function(json) {
+				
+				var slider = document.getElementById('slider-range');
+				slider.noUiSlider.destroy();
+				noUiSlider.create(slider, {
+					start: [ json.min_edad, json.max_edad ], // Handle start position
+					step: 10,
+					connect: true, // Display a colored bar between the handles
+					behaviour: 'tap-drag', // Move handle on tap, bar is draggable
+					range: { // Slider can select '0' to '100'
+						'min': Number(json.min_edad),
+						'max': Number(json.max_edad)
+					}
+				});
+				//**LINSTENER DEL SLIDER****/
+				var MinInput = document.getElementById('MinEdad'),
+				MaxInput = document.getElementById('MaxEdad');
+				var max=Number(MaxInput.value);
+				var min=Number(MinInput.value)
+				// When the slider value changes, update the input and span
+				slider.noUiSlider.on('update', function( values, handle ) {
+					
+					if ( handle ) {
+						MaxInput.value  = values[handle];
+					} else {
+						MinInput.value  = values[handle];
+					}
+					
+				});
+				slider.noUiSlider.set( [min, max] );
+			
+		}
 		function borrar(id){
 			var element = popup.getElement();
 			$(element).popover('destroy');
