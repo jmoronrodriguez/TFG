@@ -1,7 +1,7 @@
 
-	<div id="page-content-wrapper" style="height: 100%;">
+	<div id="page-content-wrapper" style="height: 100%; text-align: center;">
             <div class="container-fluid">
-				<div class="row">
+				<div class="row" >
 				
 					<ul class='adminMenu'>
 						<li> <a href="<?= site_url(array('adminPOI', 'nuevo')) ?>"><img src="<?=asset_url();?>icons/POI MAP.svg" width='95px' height=' 95px'/></a></li>
