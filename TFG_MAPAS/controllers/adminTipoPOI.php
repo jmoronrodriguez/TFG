@@ -38,6 +38,14 @@ class adminTipoPOI extends CI_Controller {
 		//LISTAMOS LA CONFIGURACIONES
 		echo json_encode($template_data['bandos']);
 	}
+	public function get_tipoPOI_json($id){
+		//CARGAMOS EL MODELO DE CONFIGURACION
+		$this->load->model('tipoPOI_model');
+		//LEEMOS LA BD DE LAS DISTINTAS CONFIGURACIONS
+		$data=$this->tipoPOI_model->get_tipoPOI($id);
+		//LISTAMOS LA CONFIGURACIONES
+		echo json_encode($data);
+	}
 	public function edit(){
 		$data['tipo_id']=$_POST['tipo_id'];
 		$data['tipo_des']=$_POST['tipo_des'];;

@@ -11,7 +11,7 @@
 	<?=css('ripples.min.css')?>
 	<?=css('estilos.css')?>
 	<?=css('nouislider.min.css')?>
-	
+	<?=css('bootstrap-colorpicker.css')?>
 	
 	<?=js('jquery-2.1.3.min.js')?>
 	
@@ -21,6 +21,8 @@
 	<!--material desing-->
 	<?=js('ripples.min.js')?>
 	<?=js('material.min.js')?>
+	<?=js('bootstrap-colorpicker.js')?>
+	
 	<link rel="stylesheet" href="http://openlayers.org/en/v3.6.0/css/ol.css" type="text/css">
     <style>
       .map {
@@ -42,7 +44,7 @@
 			text-decoration: none;
 		}
 		.popover-content {
-		  min-width: 200px;
+		  min-width: 250px;
 		}
 		.leyendaControl {
 		  top: 65px;
@@ -58,6 +60,9 @@
 		  background: #FFFFFF !important;
 		  border: thin solid;
 		}
+		.popover-title {
+			color: #000;
+		  }
 	</style>
 	<script>$('#widget').draggable();</script>
 	<!--AÑADIMOS LA ETIQUETA META PARA QUE SE VEA BIEN EN LOS NAVEGADORES MOVILIES-->

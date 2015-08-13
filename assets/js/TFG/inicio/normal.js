@@ -110,7 +110,7 @@ var projPrin = ol.proj.get('EPSG:3857');
 var arrayCapasMapas = new ol.Collection();//ARRAY PARA LAS CAPAS
 var vectorSource = new ol.source.Vector({//VECTOR PARA LOS MARKET
     //create empty vector
-})
+});
 
 
 //**CREAMOS LA CAPA CON EL CONJUNTO DE CAPAS***/
@@ -143,65 +143,35 @@ var map = new ol.Map({
     })
 });
 
-//EVENTOS DE RATON EN EL MAPA
-
+//Añadimos el POPUP Al mapa
+var popup = new ol.Overlay({
+    element: document.getElementById('popup')
+});
+map.addOverlay(popup);
+//Evento Clck Mapa
 map.on('click', function (evt) {
-
+    var element = popup.getElement();
+    $(element).popover('destroy');
+   
     var feature = map.forEachFeatureAtPixel(evt.pixel,
             function (feature, layer) {
                 return feature;
             });
     if (feature) {
-        var idFeat = feature.get('id');
-        for (i = 0; i < arrayCapasMapas.getLength(); i++) {
-            var capa = arrayCapasMapas.item(i);
-            var id = capa.get('id');
-            if (idFeat == id) {
-                capa.setVisible(!capa.getVisible());
-            }
-        }
+        
+        
+         crearPopOver(feature);
+        
     }
 });
+
 // change mouse cursor when over marker
 map.on('pointermove', function (e) {
     var pixel = map.getEventPixel(e.originalEvent);
     var hit = map.hasFeatureAtPixel(pixel);
     map.getTargetElement().style.cursor = hit ? 'pointer' : '';
 });
-//**SLIDER**////
-// var slider = document.getElementById('sliderLeyenda');
-// noUiSlider.create(slider, {
-// start: [ 0, 90 ], // Handle start position
-// step: 5,
-// margin: 20, // Handles must be more than '20' apart
-// connect: true, // Display a colored bar between the handles
-// direction: 'rtl', // Put '0' at the bottom of the slider
-// orientation: 'vertical', // Orient the slider vertically
-// behaviour: 'tap-drag', // Move handle on tap, bar is draggable
-// range: { // Slider can select '0' to '100'
-// 'min': 0,
-// 'max': 100
-// },
-// pips: { // Show a scale with the slider
-// mode: 'steps',
-// density: 2
-// }
-// });
 
-//**LINSTENER DEL SLIDER****/
-// var MinInput = document.getElementById('minEdad'),
-// MaxInput = document.getElementById('maxEdad');
-
-//When the slider value changes, update the input and span
-// slider.noUiSlider.on('update', function( values, handle ) {
-// if ( handle ) {
-// MaxInput.innerHTML  = values[handle];
-// } else {
-// MinInput.innerHTML  = values[handle];
-// }
-
-// var URL = "<?= site_url(array('adminPOI', 'get_mapas_json')) ?>/2/3";
-// });
 $("#menu-toggle").click(function (e) {
     e.preventDefault();
     $("#wrapper").toggleClass("toggled");
@@ -356,7 +326,12 @@ function actualizarCapas() {
                     src: './assets/img/IconsPOIs/tipoPOI_' + item.tipo_id + '.png'
                 }))
             });
-            iconFeature.set('id', item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
+            iconFeature.set('id', item.poi_id);//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
+            iconFeature.set('descrip', item.poi_des);
+            iconFeature.set('tipoId', item.tipo_id);
+            iconFeature.set('bandoId', item.bando_id);
+            iconFeature.set('edadMax', item.poi_max);
+            iconFeature.set('edadMin', item.poi_min);
             iconFeature.setStyle(iconStyle2);//Le añadimos el estilo segun el tipo de POI
 
             //CREAMOS EL ARRAY DE iconFeatures			
@@ -371,7 +346,7 @@ function actualizarCapas() {
                     projection: projPrin
                 })
             });
-            newLayer.set('id', item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
+            newLayer.set('id', item.poi_id);//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
             newLayer.setOpacity(0.85);
             newLayer.setHue(3.14);
             arrayCapasMapas.push(newLayer);
@@ -388,7 +363,7 @@ function actualizarCapas() {
  */
 function crearSlider(json) {
     // Dependiendo de la orentacion de la pantalla asi sera del slder
-    
+
     var orientacion = 'horizontal';//Por defecto horizontal
     var direccion = 'ltr';
     $('#leyendaRango').css('modal fade bs-example-modal-lg');
@@ -417,19 +392,19 @@ function crearSlider(json) {
             'min': Number(json.min_edad),
             'max': Number(json.max_edad)
         }
-        
+
     });
     //**LINSTENER DEL SLIDER****/ 
     var MinInput = document.getElementById('minEdad'),
-    MaxInput = document.getElementById('maxEdad');
+            MaxInput = document.getElementById('maxEdad');
     slider.noUiSlider.set(arrayEdad);
     // When the slider value changes, update the input and span
     slider.noUiSlider.on('update', function (values, handle) {
-        var strValues=values[handle]+'(D.C)';
-        if (values[handle]<0){
-            strValues=((-1)*values[handle])+'(A.C)';
+        var strValues = values[handle] + '(D.C)';
+        if (values[handle] < 0) {
+            strValues = ((-1) * values[handle]) + '(A.C)';
         }
-        
+
         if (handle) {
             MaxInput.innerHTML = strValues;
         } else {
@@ -448,4 +423,108 @@ function crearSlider(json) {
 
 
 
+}
+
+function crearPopOver(featu){
+    var URL = "./index.php/adminBandos/get_bando_json/"+featu.get('bandoId');
+    var bando;
+    var data;
+    $.ajax({
+        type: "GET",
+        url: URL,
+        data: data,
+        async: false,
+        dataType: "json",
+        success: function(data) {
+               bando=data;
+        }
+    });
+    var URL = "./index.php/adminTipoPOI/get_tipoPOI_json/"+featu.get('tipoId');
+    var tipo;
+    $.ajax({
+        type: "GET",
+        url: URL,
+        data: data,
+        async: false,
+        dataType: "json",
+        success: function(data) {
+               tipo=data;
+        }
+    });
+    var element = popup.getElement();
+    var rangoStr=[];
+    var rangoPOI=[Number(featu.get('edadMin')), Number(featu.get('edadMax'))];
+    for (i=0; i<2; i++){
+        if (rangoPOI[i]<0){
+            rangoStr[i]=(-1*rangoPOI[i])+' (A.C)';
+        }else{
+            rangoStr[i]=(rangoPOI[i])+' (D.C)';
+        }        
+    }
+    var html="<div id='PopupCultura'><strong>Cultura:</strong> "+bando.description+" </div>"+
+             "<div id='PopupRango'><strong>Rango:</strong>  "+rangoStr[0]+" - "+rangoStr[1]+"</div>"+
+             "<div id='PopupTipo'><strong>Tipo:</strong> "+tipo.description+"</div>"+
+             "<div><strong>Opacidad:"+
+             "<div id='PopupSlider' style='margin:10px'></div>"+
+             "<div id='PopupCheckBox'><button type='button' class='btn btn-info' id='btnCapa'>Activar</button> </div>";
+            
+    var geometry = featu.getGeometry();
+    var coord = geometry.getCoordinates();
+    $(element).popover({
+            'placement': 'top',
+            'animation': true,
+            'html': true,
+            'content': html
+        });
+    popup.setPosition(coord);
+    $(element).popover('show');
+    $('.popover-title').html(featu.get('descrip'));
+    var softSlider = document.getElementById('PopupSlider');
+    
+    //Agregamo el evento clcik al boton de ocultar capa
+    $("#btnCapa").bind("click", function(){
+         ocultarCapa(featu.get('id'));
+     });
+    //onchange getOpacity
+    noUiSlider.create(softSlider, {
+            start: 50,
+            range: {
+                    min: 0,
+                    max: 100
+            }
+    });
+    var capaSel;
+    for (i = 0; i < arrayCapasMapas.getLength(); i++) {
+        var capa = arrayCapasMapas.item(i);
+        var id = capa.get('id');
+        if (featu.get('id') === id) {
+            softSlider.noUiSlider.set(capa.getOpacity()*100);
+            capaSel=capa;
+            if (capa.getVisible()){
+                $('#btnCapa').html('Ocultar');
+            }else{
+                $('#btnCapa').html('Mostrar');
+            }
+        }
+    }
+    softSlider.noUiSlider.on('change', function (value) {
+        capaSel.setOpacity(value/100);
+
+    });
+    
+}
+
+function ocultarCapa(idFeat){
+    for (i = 0; i < arrayCapasMapas.getLength(); i++) {
+        var capa = arrayCapasMapas.item(i);
+        var id = capa.get('id');
+        if (idFeat === id) {
+            capa.setVisible(!capa.getVisible());
+            if (capa.getVisible()){
+                $('#btnCapa').html('Ocultar');
+            }else{
+                $('#btnCapa').html('Mostrar');
+            }
+        }
+    }
 }

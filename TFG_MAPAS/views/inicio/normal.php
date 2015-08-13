@@ -1,6 +1,6 @@
 
 	<!--NAV BAR Principal-->
-	<div class="navbar navbar-material-light-green" style="border-radius: 0px; margin-bottom: 0px;">
+	<div class="navbar navbar-material-light-green" style="border-radius: 0px; margin-bottom: 0px; background: #8bc34a">
         <div class="container" style="margin-left: 0px;">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" id='menu-toggle' data-toggle="collapse" data-target=".navbar-collapse">
@@ -45,6 +45,11 @@
         </div>
     </div> -->
 	<div id='basicMap' ></div>
+	<div style="display: none;">
+	  <div id="popup" title="Coordenadas">
+		
+	  </div>
+	</div>
 	<div class="modal fade bs-example-modal-sm" id="confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		<div class="modal-dialog modal-sm" role="document">
 			<div class="modal-content">
@@ -68,7 +73,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="titleConfirm">Leyenda</h4>
+					<h4 class="modal-title" id="title">Leyenda</h4>
 				</div>
 				<div class="modal-body" id='bodyConfirm'>
 				<div class="container-fluid">
@@ -93,7 +98,17 @@
 			</div>
 		</div>
 	</div>
-	
+	<script>
+		/*var softSlider = document.getElementById('PopupSlider');
+
+		noUiSlider.create(softSlider, {
+			start: 50,
+			range: {
+				min: 0,
+				max: 100
+			}
+		});*/
+	</script>
 	<?=js('TFG/inicio/normal.js')?>
 	
 	

@@ -91,7 +91,10 @@ class AdminPOI extends CI_Controller {
 			$prueba[$i]['poi_des']=$poi->poi_des;
 			$prueba[$i]['poi_X']=$poi->poi_X;
 			$prueba[$i]['poi_Y']=$poi->poi_Y;
+			$prueba[$i]['poi_min']=$poi->poi_ini;
+			$prueba[$i]['poi_max']=$poi->poi_fin;
 			$prueba[$i]['tipo_id']=$poi->tipo_id;
+			$prueba[$i]['bando_id']=$poi->bando_id;
 			//Obtenemos las coordenadas del archivo pgw (World Info)
 			$fp = fopen("assets/visibilityMaps/worldInfo/wordInfo_".$poi->poi_id.".pgw", "r");
 			$lineas;
