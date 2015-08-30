@@ -14,7 +14,7 @@
 #div-map{
 	height: 100%;
 }
-html { overflow:hidden; }
+/*html { overflow:hidden; }*/
 .noUi-handle.noUi-active {
 	transform: scale3d(1, 1, 1);
 }

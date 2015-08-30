@@ -1,376 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
 
-	<!--NAV BAR Principal-->
-	<div class="navbar navbar-material-light-green" style="border-radius: 0px; margin-bottom: 0px;">
-        <div class="container" style="margin-left: 0px;">
+    <head>
+	<meta charset="utf-8">
+	<title>Admin</title>
+	<?=css('bootstrap.min.css')?>
+	<?=css('sb-admin-2.css')?>
+	<?=css('jquery-ui.css')?>
+	<!--material desing-->
+	<?=css('roboto.min.css')?>
+	<?=css('material.min.css')?>
+	<?=css('ripples.min.css')?>
+	<?=css('estilos.css')?>
+	<?=css('nouislider.min.css')?>
+	<?=css('bootstrap-colorpicker.css')?>
+	
+	
+	<?=js('jquery-2.1.3.min.js')?>
+	
+	<?=js('bootstrap.js')?>
+	<?=js('jquery-ui.js')?>	
+	<?=js('jquery.ui.touch-punch.min.js')?>	
+	<!--material desing-->
+	<?=js('ripples.min.js')?>
+	<?=js('material.min.js')?>
+	<?=js('bootstrap-colorpicker.js')?>
+	<?=js('metisMenu.min.js')?>
+	<?=js('sb-admin-2.js')?>	
+	<link rel="stylesheet" href="http://openlayers.org/en/v3.6.0/css/ol.css" type="text/css">
+    <style>
+      .map {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    <script src="http://openlayers.org/en/v3.6.0/build/ol.js" type="text/javascript"></script>
+	<?=js('proj4.js')?>
+	<style>
+		.adminMenu lu{ withd:75%}
+		.adminMenu li {
+			background: #00ff00 none repeat scroll 0 0;
+			border: 3px solid #555;
+			display: inline-block;
+			height: 100px;
+			margin: 10px;
+			width: 100px;
+			text-decoration: none;
+		}
+		.popover-content {
+		  min-width: 200px;
+		}
+		.colorDiv{
+			height: 100%;
+			width: 100px;
+		}
+		.leyendaControl {
+		  top: 65px;
+		  left: .5em;
+		}
+		.buttonDeselec {
+		  background: #FFFFFF !important;
+		  border: thin solid;
+		}
+	</style>
+	<script>$('#widget').draggable();</script>
+	<!--AÑADIMOS LA ETIQUETA META PARA QUE SE VEA BIEN EN LOS NAVEGADORES MOVILIES-->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+	</head>
+
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top navbar-material-light-green" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" id='menu-toggle' data-toggle="collapse" data-target=".navbar-collapse">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="<?= site_url(array('inicio', 'index')) ?>">TFG</a>
+                <a class="navbar-brand" href="index.html">SB Admin v2.0</a>
             </div>
-			<div class="navbar-collapse collapse">
-                          
-			</div>
-                        <!--/.nav-collapse -->
-        </div>
-    </div>
-	<div id="wrapper">
+            <!-- /.navbar-header -->
 
-        <!-- Sidebar -->
-		<div id="sidebar-wrapper">
-			<div class="row">
-				<div class="col-md-12">
-					Rango: <span id='minEdad'>10</span> - <span id='maxEdad'>100</span>
-				</div>
-			</div>
-			 <div class="row">
-				<div class="col-md-12">
-					<div id='slider-range' style="height: 80%; color:#000"></div>
-				</div>
-			</div>
-        </div>
-        <!-- /#sidebar-wrapper -->
+            <ul class="nav navbar-top-links navbar-right">
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown">
+					<i class="mdi-social-person"></i><b class="caret"></b>
+					</a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
 
-        
-        <!-- /#page-content-wrapper -->
-		 <div id="page-content-wrapper" style="height: 100%; padding: 2px;">
+            <div class="navbar-default navbar-material-light-green sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li>
+                            <a href="<?= site_url(array('adminPOI', 'nuevo')) ?>">POI's</a>
+                        </li>
+                        
+                        <li>
+                            <a href="<?= site_url(array('adminBandos', 'get_bandos')) ?>">Bandos</a>
+                        </li>
+						<li>
+                            <a href="<?= site_url(array('adminTipoPOI', 'get_tipoPOIs')) ?>">Tipos POI's</a>
+                        </li>
+						<li>
+                            <a href="<?= site_url(array('adminConfiguracion', 'get_configurations')) ?>">Configuraciones</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+<!------------------------------ Page Content -------------------------------------------------------------------->
+        <div id="page-wrapper" style="overflow: auto;">
             <div class="container-fluid">
                 <div class="row">
-                    <div id='basicMap' class="col-lg-12"></div>
+                    <div class="col-lg-12">
+                        <h1 class="page-header">Admin Index</h1>
+                    </div>
+                    <!-- /.col-lg-12 -->
                 </div>
+                <!-- /.row -->
+				<div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="mdi-maps-map mdi-3x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">&nbsp;</div>
+                                    <div>POI's</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ir a...</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+				<div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="mdi-maps-pin-drop mdi-3x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">&nbsp;</div>
+                                    <div>Tipos de POI</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ir a...</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+				<div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="mdi-image-assistant-photo mdi-3x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">&nbsp;</div>
+                                    <div>Culturas</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ir a...</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+				<div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="mdi-action-settings mdi-3x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">&nbsp;</div>
+                                    <div>Configuraciones</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ir a...</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                
+                
             </div>
+            </div>
+            <!-- /.container-fluid -->
         </div>
+        <!-- /#page-wrapper -->
+
     </div>
-	<div class="modal fade bs-example-modal-sm" id="confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-		<div class="modal-dialog modal-sm" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="titleConfirm">Leyenda</h4>
-				</div>
-				<div class="modal-body" id='bodyConfirm'>
-					<div class="btn-group" data-toggle="buttons">
-						<div><label class="btn  active">
-						<input type="radio" name="options" id="option1" autocomplete="off" checked> Radio 1 
-						</label></div>
-					  
-					  <div>
-					  <label class="btn">
-						<input type="radio" name="options" id="option2" autocomplete="off"> Radio 2
-					  </label>
-					  </div><div>
-					  <label class="btn ">
-						<input type="radio" name="options" id="option3" autocomplete="off"> Radio 3
-					  </label>
-					  </div>
-					</div>
-						
-				</div>
-				<div class="modal-footer">
-					
-					<button type="button" data-dismiss="modal" class="btn btn-primary">Salir</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	
-	 <script type="text/javascript">
-	/**variables Globales**/
-	var configSelect=-1;
-	/**CONTROL DE LA LEYENDA***/
-	
-	/**
-	 * Define a namespace for the application.
-	 */
-	window.app = {};
-	var app = window.app;
+    <!-- /#wrapper -->
 
-	/**
-	 * @constructor
-	 * @extends {ol.control.Control}
-	 * @param {Object=} opt_options Control options.
-	 */
-	app.LeyendaControl = function(opt_options) {
+    
 
-	  var options = opt_options || {};
+</body>
 
-	  
-
-	  var onClickTipos = function(e) {
-		consultarTipos();
-		$('#confirm').modal('toggle');
-	  };
-	  var onClickBandos = function(e) {
-		consultarBandos();
-		$('#confirm').modal('toggle');
-	  };
-	  var onClickConfiguracion = function(e) {
-		consultarConfiguracion();
-		$('#confirm').modal('toggle');
-	  };
-	  var buttonTipos = document.createElement('button');
-	  buttonTipos.innerHTML = 'T';	
-	  buttonTipos.title ='Tipos';
-	  buttonTipos.className='TipoButton';
-	  buttonTipos.addEventListener('click', onClickTipos, false);
-	  buttonTipos.addEventListener('touchstart', onClickTipos, false);
-	  
-	  var buttonBandos = document.createElement('button');
-	  buttonBandos.innerHTML = 'B';	
-	  buttonBandos.title ='Bando';
-	  buttonBandos.className='BandoButton';
-	  buttonBandos.addEventListener('click', onClickBandos, false);
-	  buttonBandos.addEventListener('touchstart', onClickBandos, false);
-	  
-	  var buttonConfiguracion = document.createElement('button');
-	  buttonConfiguracion.innerHTML = 'C';	
-	  buttonConfiguracion.title ='Configuracion';
-	  buttonConfiguracion.className='ConfiButton';
-	  buttonConfiguracion.addEventListener('click', onClickConfiguracion, false);
-	  buttonConfiguracion.addEventListener('touchstart', onClickConfiguracion, false);
-
-	  var element = document.createElement('div');
-	  element.className = 'leyendaControl ol-unselectable ol-control';
-	  element.title ='Tipos';
-	  element.appendChild(buttonConfiguracion);
-	  element.appendChild(buttonTipos);
-	  element.appendChild(buttonBandos);
-
-	  ol.control.Control.call(this, {
-		element: element,
-		target: options.target
-	  });
-
-	};
-	ol.inherits(app.LeyendaControl, ol.control.Control);
-	
-	
-	
-	/***DEFINIMOS LA PROYECCION ED50 USO 30N*****/
-	proj4.defs("EPSG:23030", "+proj=utm +zone=30 +ellps=intl"+
-    " +towgs84=-131,-100.3,-163.4,-1.244,-0.020,-1.144,9.39 "+
-    " +units=m +no_defs");
-	
-	/*********CAPA BASE***********/
-	var capaBase=new ol.layer.Tile({
-      source: new ol.source.OSM()
-    });
-	/********FIN CAPA BASE********/
-	
-	/**PROYECCION PRINCIPAL****************/
-	/**EPSG:3857--WGS84 Web Mercator*******/
-	var projPrin = ol.proj.get('EPSG:3857');
-	
-	/******OBTENEMOS LAS CAPAS Y **********/
-	/****MARKERT MEDIANTE AJAX Y JSON******/
-	var arrayCapasMapas=new ol.Collection();//ARRAY PARA LAS CAPAS
-	var vectorSource = new ol.source.Vector({//VECTOR PARA LOS MARKET
-      //create empty vector
-    })
-	
-	
-	//**CREAMOS LA CAPA CON EL CONJUNTO DE CAPAS***/
-	 var mapasVisibildad=new ol.layer.Group({
-		layers:arrayCapasMapas
-	 });
-	 
-	 //CREAMOS LA CAPA DE MARKETS
-	var marketsLayer = new ol.layer.Vector({
-	  source: vectorSource
-	});
-	 var map = new ol.Map({
-		  controls: ol.control.defaults({
-			attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-			  collapsible: false
-			})
-		  }).extend([
-			new app.LeyendaControl()
-		  ]),
- 		  layers: [
-			capaBase,
-			mapasVisibildad,
-			marketsLayer
-		  ],
-		  target: 'basicMap',
-		  
-		  view: new ol.View({
-			projection: projPrin,//Utilizamos la proyeccion por defecto WGS84 Web Mercator UTM
-			center: [-423014.1592, 4546636.6720],
-			zoom: 7
-		  })
-	});
-	
-	//EVENTOS DE RATON EN EL MAPA
-	
-	map.on('click', function(evt) {
-		
-		var feature = map.forEachFeatureAtPixel(evt.pixel,
-					function(feature, layer) {
-						return feature;
-					});
-		if (feature){
-			var idFeat=feature.get('id');
-			for (i=0; i<arrayCapasMapas.getLength(); i++){
-				var capa=arrayCapasMapas.item(i);
-				var id=capa.get('id');
-				if (idFeat==id){
-					capa.setVisible(!capa.getVisible());
-				}
-			}
-		}
-	});
-	
-	//**SLIDER**////
-	var slider = document.getElementById('slider-range');
-	noUiSlider.create(slider, {
-		start: [ 0, 90 ], // Handle start position
-		step: 5,
-		margin: 20, // Handles must be more than '20' apart
-		connect: true, // Display a colored bar between the handles
-		direction: 'rtl', // Put '0' at the bottom of the slider
-		orientation: 'vertical', // Orient the slider vertically
-		behaviour: 'tap-drag', // Move handle on tap, bar is draggable
-		range: { // Slider can select '0' to '100'
-			'min': 0,
-			'max': 100
-		},
-		pips: { // Show a scale with the slider
-			mode: 'steps',
-			density: 2
-		}
-	});
-	
-	//**LINSTENER DEL SLIDER****/
-	var MinInput = document.getElementById('minEdad'),
-	MaxInput = document.getElementById('maxEdad');
-	
-	// When the slider value changes, update the input and span
-	slider.noUiSlider.on('update', function( values, handle ) {
-		if ( handle ) {
-			MaxInput.innerHTML  = values[handle];
-		} else {
-			MinInput.innerHTML  = values[handle];
-		}
-		
-		var URL = "<?= site_url(array('adminPOI', 'get_mapas_json')) ?>/2/3";
-	});
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
-	
-	$('.TipoButton, .BandoButton').tooltip({
-	  placement: 'right'
-	});
-	/********FUNCIONES DE APOYO********/
-	
-	/**
-		Contulta los bando mediante AJAX y lo coloca en la leyenda
-	*/
-	function consultarBandos(){
-		var URL = "<?= site_url(array('adminBandos', 'get_bandos_json')) ?>";
-		$.getJSON( URL)
-		.done(function( data ) {
-			var textoHtml='';
-			$.each( data, function( i, item ) {
-				
-				textoHtml+="<div><button type='button' class='btn' id='noEdit2'  style='background:"+item.ban_color+"; padding: 10px;' ></button> "+item.ban_des+"</div>";
-				
-				
-			});
-			$('#bodyConfirm').html(textoHtml);
-		});
-		
-	}
-	
-	function consultarTipos(){
-		var URL = "<?= site_url(array('adminTipoPOI', 'get_tipoPOIs_json')) ?>";
-		$.getJSON( URL)
-		.done(function( data ) {
-			var textoHtml='';
-			$.each( data, function( i, item ) {
-				
-				textoHtml+="<div><button type='button' class='btn' id='noEdit2'  style='background: url(<?=asset_url();?>img/IconsPOIs/tipoPOI_"+item.tipo_id+".png);background-size: 30px 30px; background-repeat: no-repeat; padding: 20px;' ></button> "+item.tipo_des+"</div>";
-				
-				
-			});
-			$('#bodyConfirm').html(textoHtml);
-		});		
-	}
-	function consultarConfiguracion(){
-		var URL = "<?= site_url(array('adminConfiguracion', 'get_configurations_json')) ?>";
-		$.getJSON( URL)
-		.done(function( data ) {
-			var textoHtml='<div class="btn-group" data-toggle="buttons">';
-			$.each( data, function( i, item ) {
-				if (item.conf_id==configSelect){
-					textoHtml+='<div><label class="btn active ">';
-					textoHtml+='<input type="radio" name="confOptions" id="option_'+item.conf_id+'" autocomplete="off" value="'+item.conf_id+'" checked> '+item.conf_des+' ';
-					textoHtml+='</label></div>';
-				}else{
-					textoHtml+='<div><label class="btn  ">';
-					textoHtml+='<input type="radio" name="confOptions" id="option_'+item.conf_id+'" autocomplete="off" value="'+item.conf_id+'"> '+item.conf_des+' ';
-					textoHtml+='</label></div>';
-				}
-				
-				
-				
-			});
-			textoHtml+='</div>';
-			$('#bodyConfirm').html(textoHtml);
-			$("input[name=confOptions]:radio").bind("change", function(){cambioConfiguracion($(this).val());});
-		});		
-		
-	}
-	function cambioConfiguracion(id){
-		configSelect=id;
-		var URL = "<?= site_url(array('adminPOI', 'get_mapasBydata_json')) ?>";
-		arrayCapasMapas.clear();
-		vectorSource.clear();
-		$.getJSON(URL, { conf: id}, function(json) {
-			$.each( json, function( i, item ) {
-				var coordinates=[item.poi_X,item.poi_Y];
-				var iconFeature = new ol.Feature({
-				  geometry: new ol.geom.Point(coordinates),
-				  name: item.poi_des,
-				  population: 4000,
-				  rainfall: 500
-				});	
-				var iconStyle2 = new ol.style.Style({
-				  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-					anchor: [1, 1],
-					anchorXUnits: 'pixels',
-					anchorYUnits: 'pixels',
-					opacity: 1,
-					
-					src: '<?=asset_url();?>img/IconsPOIs/tipoPOI_'+item.tipo_id+'.png'
-				  }))
-				});
-				iconFeature.set('id',item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
-				iconFeature.setStyle(iconStyle2);//Le añadimos el estilo segun el tipo de POI
-				
-				//CREAMOS EL ARRAY DE iconFeatures			
-				vectorSource.addFeature(iconFeature);
-				//CREMOS LA BOUNDIND BOX DE LA IMAGEN [minX, minY, MaxX, MaxY] 
-				var extent = [ item.minX,item.minY, item.maxX,item.maxY ];
-				//CREAMOS LA CAPA
-				var newLayer = new ol.layer.Image({
-					source: new ol.source.ImageStatic({
-						url: '<?=asset_url();?>visibilityMaps/map_'+item.poi_id+'.png',
-						imageExtent: ol.proj.transformExtent(extent, 'EPSG:23030', 'EPSG:3857'),//Transformamos la BB de ED50 a WGS84 Web Mercator
-						projection: projPrin
-					  })
-					});
-				newLayer.set('id',item.poi_id)//AÑADIMOS EL ID PARA PODER IDENTIFICARLO
-				newLayer.setOpacity(0.85);
-				newLayer.setHue(3.14);
-				arrayCapasMapas.push(newLayer);
-			});
-		});
-
-	}
-    </script>
+</html>

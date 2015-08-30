@@ -2,10 +2,9 @@
 
 class AdminConfiguracion extends CI_Controller {
 
-	
 	public function get_configurations(){
 		$this->load->library('session');
-		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		!isset($this->session->userdata['logged_in'])? redirect('/admin/login', 'refresh') :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
 		
 		//CARGAMOS EL MODELO DE CONFIGURACION
 		$this->load->model('configuracion_model');

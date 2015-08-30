@@ -1,26 +1,23 @@
-
-
-        
-        <!-- /#CONTENDIO-->
-		 <div id="page-content-wrapper" style="height: 100%;">
+		<div id="page-wrapper" style="overflow: auto;">
             <div class="container-fluid">
-				<!--TITULO Y MIGA DE PAN-->
-				<div class="row">
+                <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
+                        <h3 class="page-header">
                             Usuario
-                        </h1>
+                        </h3>
                         <ol class="breadcrumb">
                             <li>
-                                <i class="fa fa-dashboard"></i>  <a href="index.html">Admin</a>
+                                <i class="fa fa-dashboard"></i>  <a href="<?= site_url(array('admin')) ?>">Admin</a>
                             </li>
                             <li class="active">
                                 <i class="fa fa-bar-chart-o"></i> Usuario
                             </li>
                         </ol>
                     </div>
+                    <!-- /.col-lg-12 -->
                 </div>
-                <div class="row" style="width:50%">
+                <!-- /.row -->
+				<div class="row" style="width:50%">
 					<form class="form-horizontal" action="<?= site_url(array('admin', 'cambiarUsuario')) ?>" method="POST" data-toggle="validator">
 					  <div class="form-group">
 						<label for="inputEmail3" class="col-sm-2 control-label">Usuario</label>
@@ -51,14 +48,17 @@
 					  </div>
 					</form>
                 </div>
-            </div>
+				
+			</div>
+            <!-- /.container-fluid -->
         </div>
-    </div>
+	</div>
 	
+
+
 	
 	<?=js('validator.js')?>
- <script type="text/javascript">
+
+
+
 	
- </script>
-
-

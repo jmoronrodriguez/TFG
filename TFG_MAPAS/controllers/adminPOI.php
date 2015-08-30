@@ -11,7 +11,7 @@ class AdminPOI extends CI_Controller {
 	
 	public function nuevo(){
 		$this->load->library('session');
-		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		!isset($this->session->userdata['logged_in'])? redirect('/admin/login', 'refresh') :   '';  // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
 		
 		//LISTAMOS LA CONFIGURACIONES
 		$this->load->view('templates/header_admin');
@@ -109,8 +109,8 @@ class AdminPOI extends CI_Controller {
 			//Obtenemos el alto y el ancho de la imagen para calcular las otras coordenadas que faltan
 			$nombre_fichero= asset_url()."visibilityMaps/map_".$poi->poi_id.".png";
 			list($ancho, $alto, $tipo, $atributos) = getimagesize("./assets/visibilityMaps/map_".$poi->poi_id.".png");
-			$prueba[$i]['maxX']=((float)$lineas[4]+($ancho*50));
-			$prueba[$i]['maxY']=((float)$lineas[5] -($alto*50));
+			$prueba[$i]['maxX']=((float)$lineas[4]+ ($ancho*(float)$lineas[0]));
+			$prueba[$i]['maxY']=((float)$lineas[5] +($alto*(float)$lineas[3]));
 			$i++;
 		}
 		echo json_encode ($prueba);

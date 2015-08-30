@@ -22,7 +22,7 @@ class Admin extends CI_Controller {
 		
 		$this->load->helper('url');
 		$this->load->library('session');
-		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		!isset($this->session->userdata['logged_in'])? redirect('/admin/login', 'refresh') :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
 		$this->load->view('templates/header_admin');
 		$this->load->view('admin/admin_index');
 		$this->load->view('templates/footer_admin');
@@ -69,13 +69,13 @@ class Admin extends CI_Controller {
 	public function logout(){   
 	   $this->load->library('session');
 	   $this->session->unset_userdata('logged_in'); // desactivamos la varialble de session "habilitado". Equivale a dejar sin acceso al usuario.
-	   $this->login();
+	   redirect('', 'refresh');
 	}
 	
 	public function cambiarUsuario(){
 		$this->load->library('session');
 		$this->load->helper('url');
-		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		!isset($this->session->userdata['logged_in'])? redirect('/admin/login', 'refresh') :   '';  // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
 		if (!isset($_POST['username'])){
 			
 			$data['username']=$this->session->userdata['logged_in']['username'];

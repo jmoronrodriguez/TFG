@@ -4,7 +4,6 @@
 	<title>Mapas Visibilidad Total</title>
 	<?=css('bootstrap.min.css')?>
 	<?=css('simple-sidebar.css')?>
-	<?=css('jquery-ui.css')?>
 	<!--material desing-->
 	<?=css('roboto.min.css')?>
 	<?=css('material.min.css')?>
@@ -16,21 +15,18 @@
 	<?=js('jquery-2.1.3.min.js')?>
 	
 	<?=js('bootstrap.js')?>
-	<?=js('jquery-ui.js')?>	
-	<?=js('jquery.ui.touch-punch.min.js')?>	
 	<!--material desing-->
 	<?=js('ripples.min.js')?>
 	<?=js('material.min.js')?>
-	<?=js('bootstrap-colorpicker.js')?>
-	
-	<link rel="stylesheet" href="http://openlayers.org/en/v3.6.0/css/ol.css" type="text/css">
-    <style>
-      .map {
-        height: 100%;
-        width: 100%;
-      }
-    </style>
-    <script src="http://openlayers.org/en/v3.6.0/build/ol.js" type="text/javascript"></script>
+	<?=js('bootstrap-colorpicker.js')?>	
+<link rel="stylesheet" href="http://openlayers.org/en/v3.6.0/css/ol.css" type="text/css">
+<style>
+  .map {
+	height: 100%;
+	width: 100%;
+  }
+</style>
+<script src="http://openlayers.org/en/v3.6.0/build/ol.js" type="text/javascript"></script>
 	<?=js('proj4.js')?>
 	<style>
 		.adminMenu lu{ withd:75%}
@@ -64,7 +60,6 @@
 			color: #000;
 		  }
 	</style>
-	<script>$('#widget').draggable();</script>
 	<!--AÑADIMOS LA ETIQUETA META PARA QUE SE VEA BIEN EN LOS NAVEGADORES MOVILIES-->
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	

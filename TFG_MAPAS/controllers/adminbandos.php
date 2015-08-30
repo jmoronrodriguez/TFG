@@ -20,7 +20,7 @@ class AdminBandos extends CI_Controller {
 	 
 	 public function index(){
 		$this->load->library('session');
-		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		!isset($this->session->userdata['logged_in'])? redirect('/admin/login', 'refresh') :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
 		
 		//CARGAMOS EL MODELO DE CONFIGURACION
 		$this->load->model('bando_model');
@@ -33,7 +33,7 @@ class AdminBandos extends CI_Controller {
 	 }
 	public function get_bandos(){
 		$this->load->library('session');
-		!isset($this->session->userdata['logged_in'])?   die('Página con acceso restringido. <a href="'.site_url(array('admin', 'login')).'">Click aquí para hacer login</a>')   :   ''; // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
+		!isset($this->session->userdata['logged_in'])? redirect('/admin/login', 'refresh') :   '';  // si el usuario no tiene activada la variable de sessión "habilitado", detenemos la ejecución del programa y presentamos mensaje de error.
 		
 		//CARGAMOS EL MODELO DE CONFIGURACION
 		$this->load->model('bando_model');
@@ -93,7 +93,7 @@ class AdminBandos extends CI_Controller {
 				$colorBlanco=imagecolorat($im, 0,0);
 				$ancho=imagesx($im); //devuelve el ancho de la imagen
 				$alto=imagesy($im); //devuelve el alto de la imagen
-				
+
 				$hex = str_replace("#", "", $hex);
 				$r = hexdec(substr($hex,0,2));
 				$g = hexdec(substr($hex,2,2));

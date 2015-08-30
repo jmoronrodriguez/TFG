@@ -1,34 +1,106 @@
+<div id="page-wrapper" style="overflow: auto;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Panel de Administraci&oacute;n</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="mdi-maps-map mdi-3x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">&nbsp;</div>
+                                <div>POI's</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?= site_url(array('adminPOI', 'nuevo')) ?>">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ir a...</span>
+                            <span class="pull-right"><i class="mdi-navigation-arrow-forward"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="mdi-maps-pin-drop mdi-3x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">&nbsp;</div>
+                                <div>Tipos de POI</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?= site_url(array('adminTipoPOI', 'get_tipoPOIs')) ?>">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ir a...</span>
+                            <span class="pull-right"><i class="mdi-navigation-arrow-forward"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="mdi-image-assistant-photo mdi-3x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">&nbsp;</div>
+                                <div>Culturas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?= site_url(array('adminBandos', 'get_bandos')) ?>">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ir a...</span>
+                            <span class="pull-right"><i class="mdi-navigation-arrow-forward"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="mdi-action-settings mdi-3x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">&nbsp;</div>
+                                <div>Configuraciones</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?= site_url(array('adminConfiguracion', 'get_configurations')) ?>">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ir a...</span>
+                            <span class="pull-right"><i class="mdi-navigation-arrow-forward"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
 
-	<div id="page-content-wrapper" style="height: 100%; text-align: center;">
-            <div class="container-fluid">
-				<div class="row" >
-				
-					<ul class='adminMenu'>
-						<li> <a href="<?= site_url(array('adminPOI', 'nuevo')) ?>"><img src="<?=asset_url();?>icons/POI MAP.svg" width='95px' height=' 95px'/></a></li>
-						<li> <a href="<?= site_url(array('adminConfiguracion', 'get_configurations')) ?>"><img src="<?=asset_url();?>icons/configure.svg" width='95px' height=' 95px'/></a> </li>
-						
-					</ul>
-				</div>
-				
-				<div class="row">
-					<ul class='adminMenu'>
-						<li> <a href="<?= site_url(array('adminTipoPOI', 'get_tipoPOIs')) ?>"><img src="<?=asset_url();?>icons/POI MAP.svg" width='95px' height=' 95px'/></a> </li>
-						<li> <a href="<?= site_url(array('adminBandos', 'get_bandos')) ?>"><img src="<?=asset_url();?>icons/POI MAP.svg" width='95px' height=' 95px'/></a></li>
-					</ul>
-				</div>
-				<div class="row">
-					<ul class='adminMenu'>
-						<li> <a href="<?= site_url(array('admin', 'cambiarUsuario')) ?>"><img src="<?=asset_url();?>icons/User.svg" width='95px' height=' 95px'/></a> </li>
-						
-					</ul>
-				</div>
-			</div>
-	</div>
+
+
+        </div>
+    </div>
+    <!-- /.container-fluid -->
 </div>
-
-<script>
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
-    </script>
+</div>
